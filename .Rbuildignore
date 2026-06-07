@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.Rhistory$
+^\.RData$
+^\.RDataTmp$
+^_pkgdown\.yml$
+^pkgdown$
+^docs$
+^\.github$
+^data-raw$
+^.*\.exe$

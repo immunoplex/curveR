@@ -1,0 +1,9 @@
+.Rhistory
+.RData
+.RDataTmp
+.Rproj.user
+inst/doc
+*.exe
+*.o
+*.so
+Rplots.pdf

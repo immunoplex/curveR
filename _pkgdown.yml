@@ -1,0 +1,258 @@
+url: https://immunoplex.github.io/curveR/
+
+template:
+  bootstrap: 5.0
+  bootswatch: flatly
+  math-rendering:
+    mathjax: true
+
+home:
+  title: curveR
+  description: >
+    Calibration curve ecosystem for quantitative immunoassays. Four coordinated
+    R packages sharing a common data contract, identical model definitions, and
+    a common output class — making frequentist–Bayesian comparisons a single
+    function-call difference.
+  links:
+  - text: "curveRcore on GitHub"
+    href: https://github.com/immunoplex/curveRcore
+  - text: "curveRfreq on GitHub"
+    href: https://github.com/immunoplex/curveRfreq
+  - text: "curveRbayes on GitHub"
+    href: https://github.com/immunoplex/curveRbayes
+  - text: "curveRweights on GitHub"
+    href: https://github.com/immunoplex/curveRweights
+
+navbar:
+  title: "curveR"
+  logo:
+    image: man/figures/logo_small.png
+    alt: curveR logo
+    width: 200px
+    href: index.html
+  structure:
+    left:
+    - intro
+    - reference
+    - articles
+    - news
+    right:
+    - search
+    - github
+  components:
+    github:
+      icon: fa-github
+      href: https://github.com/immunoplex/curveR
+      aria-label: GitHub
+
+articles:
+- title: Getting started
+  navbar: ~
+  contents:
+  - curveR-methods-comparison
+
+- title: Single-method workflows
+  navbar: Single-method workflows
+  contents:
+  - frequentist-only
+  - bayesian-only
+  - precision-weighting
+
+reference:
+- title: "curveR: bead_assay adding timeperiod cohort_arm"
+  desc: Generate design variables for the example data.
+  contents:
+  - curveR::add_bead_assay_design
+
+- title: "curveRcore: Forward models"
+  desc: >
+    Five canonical sigmoidal forward model functions shared across all
+    fitting engines.
+  contents:
+  - curveRcore::logistic4
+  - curveRcore::logistic5
+  - curveRcore::loglogistic4
+  - curveRcore::loglogistic5
+  - curveRcore::gompertz4
+  - curveRcore::available_models
+  - curveRcore::model_params
+  - curveRcore::build_nls_formulas
+
+- title: "curveRcore: Inverses"
+  desc: Analytical back-calculation functions for all five models.
+  contents:
+  - curveRcore::inv_logistic4
+  - curveRcore::inv_logistic5
+  - curveRcore::inv_loglogistic4
+  - curveRcore::inv_loglogistic5
+  - curveRcore::inv_gompertz4
+
+- title: "curveRcore: Derivatives and gradients"
+  desc: >
+    First and second derivatives plus analytical gradient closures used
+    for delta-method uncertainty propagation.
+  contents:
+  - curveRcore::dydx_logistic4
+  - curveRcore::dydx_logistic5
+  - curveRcore::dydx_loglogistic4
+  - curveRcore::dydx_loglogistic5
+  - curveRcore::dydx_gompertz4
+  - curveRcore::d2x_logistic4
+  - curveRcore::d2x_logistic5
+  - curveRcore::d2x_loglogistic4
+  - curveRcore::d2x_loglogistic5
+  - curveRcore::d2x_gompertz4
+  - curveRcore::grad_logistic4
+  - curveRcore::grad_logistic5
+  - curveRcore::grad_loglogistic4
+  - curveRcore::grad_loglogistic5
+  - curveRcore::grad_gompertz4
+  - curveRcore::make_inv_and_grad_fixed
+
+- title: "curveRcore: Preprocessing and transforms"
+  desc: >
+    The preprocessing pipeline applied upstream of both fitting packages.
+  contents:
+  - curveRcore::preprocess_standards
+  - curveRcore::compute_concentration
+  - curveRcore::compute_log_response
+  - curveRcore::correct_prozone
+  - curveRcore::perform_blank_operation
+  - curveRcore::resolve_fixed_lower_asymptote
+  - curveRcore::adaptive_constraint_profile
+  - curveRcore::validate_fixed_lower_asymptote
+
+- title: "curveRcore: Settings and configuration"
+  desc: Constructor functions for fit settings objects.
+  contents:
+  - curveRcore::new_antigen_constraints
+  - curveRcore::new_fit_options
+  - curveRcore::new_study_params
+  - curveRcore::resolve_effective_models
+  - curveRcore::resolve_response_col
+
+- title: "curveRcore: Output class and extractors"
+  desc: >
+    The shared `calibration_result` S3 class and tidy-style extractors.
+    Both fitting packages return objects of this class so downstream
+    code is engine-agnostic.
+  contents:
+  - curveRcore::new_calibration_result
+  - curveRcore::new_calibration_result_multiplate
+  - curveRcore::tidy_samples
+  - curveRcore::tidy_grid
+  - curveRcore::pcov_se_conversion
+  - curveRcore::compare_calibrations
+  - curveRcore::compare_parameters
+  - curveRcore::compare_samples
+  - curveRcore::agreement_metrics
+
+- title: "curveRcore: Eligibility gating and model selection"
+  desc: >
+    Four-gate eligibility check applied identically by both fitting
+    packages before AIC or LOO-CV selection.
+  contents:
+  - curveRcore::assess_model_eligibility
+  - curveRcore::select_best_eligible
+
+- title: "curveRcore: Detection and quantification limits"
+  desc: LOD, MDC, RDL, shape-based LLOQ/ULOQ, and CDAN precision grids.
+  contents:
+  - curveRcore::compute_detection_limits
+  - curveRcore::compute_detection_limits_multiplate
+  - curveRcore::compute_shape_loq_from_grid
+  - curveRcore::enrich_grid_with_d2y
+  - curveRcore::generate_prediction_grid
+  - curveRcore::compute_curve_ci
+  - curveRcore::predict_grid_response
+
+- title: "curveRfreq: Calibration fitting"
+  desc: >
+    Frequentist multi-start Levenberg–Marquardt NLS calibration.
+    `fit_calibration_freq_multiplate()` is the primary entry point.
+  contents:
+  - curveRfreq::fit_calibration_freq
+  - curveRfreq::fit_calibration_freq_multiplate
+  - curveRfreq::fit_ensemble_nls
+  - curveRfreq::generate_start_lists
+  - curveRfreq::compute_model_constraints
+
+- title: "curveRfreq: Model selection and prediction"
+  desc: AIC ranking, best-parameter extraction, and uncertainty propagation.
+  contents:
+  - curveRfreq::summarise_ensemble
+  - curveRfreq::extract_best_parameters
+  - curveRfreq::select_best_aic
+  - curveRfreq::predict_grid_freq
+  - curveRfreq::predict_samples_freq
+
+- title: "curveRfreq: Multi-curve helpers"
+  desc: Tidy extractors for multiplate calibration results.
+  contents:
+  - curveRfreq::summary_table
+  - curveRfreq::collect_samples
+
+- title: "curveRbayes: Calibration fitting"
+  desc: >
+    Bayesian hierarchical calibration via Stan. All curve_id values are
+    fitted simultaneously in a single hierarchical model.
+  contents:
+  - curveRbayes::fit_calibration_bayes
+  - curveRbayes::compile_stan_model
+  - curveRbayes::fit_bayes_single
+  - curveRbayes::extract_curve_params
+
+- title: "curveRbayes: Stan data and priors"
+  desc: >
+    Data preparation for Stan and data-adaptive weakly informative
+    hyperprior construction.
+  contents:
+  - curveRbayes::build_stan_data
+  - curveRbayes::compute_dynamic_priors
+
+- title: "curveRbayes: LOO-CV model selection"
+  desc: PSIS-LOO cross-validation and Bayesian stacking weights.
+  contents:
+  - curveRbayes::compute_loo
+  - curveRbayes::compare_models_loo
+
+- title: "curveRbayes: Posterior prediction and CDAN precision"
+  desc: >
+    Posterior predictive grid (CDAN three-step procedure) and
+    test-sample back-calculation.
+  contents:
+  - curveRbayes::predict_grid_bayes
+  - curveRbayes::predict_samples_bayes
+
+- title: "curveRbayes: Multi-curve helpers"
+  desc: Tidy extractors for multiplate Bayesian calibration results.
+  contents:
+  - curveRbayes::summary_table_bayes
+  - curveRbayes::collect_samples_bayes
+
+- title: "curveRweights: curveR ecosystem entry points"
+  desc: >
+    The recommended API for users coming from curveRfreq or curveRbayes.
+    Convert calibration results to weight inputs, estimate phi and beta1,
+    apply weights to new data, and join weights back onto sample frames.
+  contents:
+  - curveRweights::as_weight_data
+  - curveRweights::fit_precision_weights
+  - curveRweights::predict_weights
+  - curveRweights::join_weights
+
+- title: "curveRweights: Core fitting and diagnostics"
+  desc: >
+    The joint Bayesian location-scale model and supporting diagnostics.
+  contents:
+  - curveRweights::fit_saturated_weight
+  - curveRweights::fit_saturated_weight_batch
+  - curveRweights::apply_saturated_weights
+  - curveRweights::compute_saturated_weights
+  - curveRweights::weight_diagnostics
+  - curveRweights::prepare_cv
+  - curveRweights::diagnose_cv
+  - curveRweights::interpret_beta1
+
+news:
+  one_page: true

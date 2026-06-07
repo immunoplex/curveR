@@ -1,0 +1,66 @@
+Package: curveR
+Title: Calibration Curve Ecosystem for Quantitative Immunoassays
+Version: 0.2.0
+Authors@R: c(
+    person("Michael Scot", "Zens",
+           email = "michael.s.zens@dartmouth.edu",
+           role = c("aut", "cre")),
+    person("Hardik", "Gupta",
+           email = "hardik.gupta@dartmouth.edu",
+           role = "aut"),
+    person("Seamus O.", "Stein",
+           email = "seamusstein@gmail.com",
+           role = "aut"),
+    person("Anne G.", "Hoen",
+           email = "anne.g.hoen@dartmouth.edu",
+           role = "aut")
+  )
+Description: Meta-package for the curveR immunoassay calibration curve
+    ecosystem. Installs and attaches curveRcore (shared model mathematics,
+    preprocessing, and output class) and curveRfreq (frequentist NLS
+    calibration) as hard dependencies. curveRbayes (Bayesian hierarchical
+    calibration via Stan) and curveRweights (continuous precision weighting
+    from calibration-curve uncertainty) are available as optional
+    Stan-dependent components. Loading curveR emits a startup message
+    describing all four packages and the CmdStan installation requirement
+    for the Stan-backed components.
+URL: https://immunoplex.github.io/curveR/, https://github.com/immunoplex/curveR
+BugReports: https://github.com/immunoplex/curveR/issues
+Remotes:
+    immunoplex/curveRcore,
+    immunoplex/curveRfreq,
+    immunoplex/curveRbayes,
+    immunoplex/curveRweights,
+    stan-dev/cmdstanr
+Suggests:
+    curveRbayes,
+    curveRweights,
+    cmdstanr,
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown,
+    ggplot2,
+    dplyr,
+    tibble,
+    posterior,
+    loo,
+    bayesplot,
+    scales,
+    purrr,
+    brms,
+    metafor,
+    rstan
+Additional_repositories: https://stan-dev.r-universe.dev
+VignetteBuilder: knitr
+License: AGPL (>= 3) + file LICENSE
+Encoding: UTF-8
+LazyData: false
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Config/testthat/edition: 3
+Config/Needs/website: immunoplex/curveRcore, immunoplex/curveRfreq,
+    immunoplex/curveRbayes, immunoplex/curveRweights, stan-dev/cmdstanr
+Depends:
+    R (>= 4.1),
+    curveRcore,
+    curveRfreq
