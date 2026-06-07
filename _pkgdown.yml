@@ -55,6 +55,7 @@ reference:
   desc: Generate design variables for the example data.
   contents:
   - add_bead_assay_design
+  - curveR-package
 
 - title: "curveRcore: Forward models"
   desc: >
