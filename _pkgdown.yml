@@ -3,8 +3,7 @@ url: https://immunoplex.github.io/curveR/
 template:
   bootstrap: 5.0
   bootswatch: flatly
-  math-rendering:
-    mathjax: true
+  math-rendering: mathjax
 
 home:
   title: curveR
@@ -49,20 +48,13 @@ articles:
 - title: Getting started
   navbar: ~
   contents:
-  - curveR-methods-comparison
-
-- title: Single-method workflows
-  navbar: Single-method workflows
-  contents:
-  - frequentist-only
-  - bayesian-only
-  - precision-weighting
+  - "curveR-methods-comparison"
 
 reference:
 - title: "curveR: bead_assay adding timeperiod cohort_arm"
   desc: Generate design variables for the example data.
   contents:
-  - curveR::add_bead_assay_design
+  - add_bead_assay_design
 
 - title: "curveRcore: Forward models"
   desc: >

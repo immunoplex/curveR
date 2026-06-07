@@ -9,3 +9,5 @@
 ^\.github$
 ^data-raw$
 ^.*\.exe$
+^curveR_plan\.md$
+^deploy\.R$

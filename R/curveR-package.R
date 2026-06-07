@@ -42,6 +42,8 @@
 #' package because it requires all four packages simultaneously:
 #' \code{vignette("curveR-methods-comparison", package = "curveR")}
 #'
+#' @import curveRcore
+#' @import curveRfreq
 #' @name curveR-package
 #' @aliases curveR
 "_PACKAGE"
