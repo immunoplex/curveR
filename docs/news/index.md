@@ -1,5 +1,39 @@
 # Changelog
 
+## curveR 0.3.0
+
+### Package versions in this release
+
+| Package       | Version |
+|---------------|---------|
+| curveRcore    | 0.5.0   |
+| curveRfreq    | 0.5.0   |
+| curveRbayes   | 0.5.0   |
+| curveRweights | 0.2.1   |
+
+### What’s new
+
+- **Out-of-range test samples.** Every back-calculated sample now
+  carries censoring columns (`censor_class`, `censor_type`,
+  `censor_lower`, `censor_upper`, from
+  [`curveRcore::classify_censoring_multiplate()`](https://immunoplex.github.io/curveRcore/reference/classify_censoring_multiplate.html)),
+  asymmetric predictive quantiles (`conc_q_lo/med/hi`), threshold
+  probabilities (`p_below_lloq`, `p_above_uloq`, `p_below_cutoff`) and
+  censored-draw shares (`frac_draws_below_a/_above_d`), computed
+  identically by both engines via
+  [`curveRcore::summarize_conc_draws()`](https://immunoplex.github.io/curveRcore/reference/summarize_conc_draws.html).
+- **New vignette “Analysing I-SPI exports”**: censored Gaussian (Tobit),
+  survival-style and Bayesian censored analyses, threshold
+  probabilities, and a simulation showing that inverse-variance
+  weighting by a concentration-dependent SE biases group means toward
+  the best-measured part of the curve — with a latent-variable
+  alternative.
+
+### Breaking changes
+
+None. All new `$samples` columns are additive; `se_concentration` and
+`pcov` are unchanged.
+
 ## curveR 0.2.0
 
 ### Package versions in this release

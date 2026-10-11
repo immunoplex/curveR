@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">curveR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,6 +26,9 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/curveR-methods-comparison.html">Standard Curve Calibration for Quantitative Immunoassays: A Comparison of Frequentist and Bayesian Approaches Using Five Nonlinear Sigmoidal Models
     </a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Downstream analysis</h6></li>
+    <li><a class="dropdown-item" href="../articles/analysing-ispi-exports.html">Analysing I-SPI exports: censoring, predictive intervals and precision</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -309,7 +312,7 @@
           <code><a href="https://immunoplex.github.io/curveRcore/reference/preprocess_standards.html">preprocess_standards()</a></code>
 
         </dt>
-        <dd>Full Preprocessing Pipeline for Standard Curve Data (from curveRcore)</dd>
+        <dd>Full Preprocessing Pipeline for Standard Curve Data (mask-aware) (from curveRcore)</dd>
 
         <dt>
 
@@ -323,7 +326,7 @@
           <code><a href="https://immunoplex.github.io/curveRcore/reference/compute_log_response.html">compute_log_response()</a></code>
 
         </dt>
-        <dd>Log10-Transform the Assay Response (from curveRcore)</dd>
+        <dd>Log10-Transform the Assay Response (mask-aware) (from curveRcore)</dd>
 
         <dt>
 
@@ -679,28 +682,28 @@
 
       <dl><dt>
 
-          <code><a href="https://rdrr.io/pkg/curveRbayes/man/fit_calibration_bayes.html" class="external-link">fit_calibration_bayes()</a></code>
+          <code><a href="https://immunoplex.github.io/curveRbayes/reference/fit_calibration_bayes.html">fit_calibration_bayes()</a></code>
 
         </dt>
         <dd>Fit Bayesian Hierarchical Calibration Curves (from curveRbayes)</dd>
 
         <dt>
 
-          <code><a href="https://rdrr.io/pkg/curveRbayes/man/compile_stan_model.html" class="external-link">compile_stan_model()</a></code>
+          <code><a href="https://immunoplex.github.io/curveRbayes/reference/compile_stan_model.html">compile_stan_model()</a></code>
 
         </dt>
         <dd>Compile a curveRbayes Stan Model (Cached) (from curveRbayes)</dd>
 
         <dt>
 
-          <code><a href="https://rdrr.io/pkg/curveRbayes/man/fit_bayes_single.html" class="external-link">fit_bayes_single()</a></code>
+          <code><a href="https://immunoplex.github.io/curveRbayes/reference/fit_bayes_single.html">fit_bayes_single()</a></code>
 
         </dt>
         <dd>Fit a Single Model Family via MCMC (from curveRbayes)</dd>
 
         <dt>
 
-          <code><a href="https://rdrr.io/pkg/curveRbayes/man/extract_curve_params.html" class="external-link">extract_curve_params()</a></code>
+          <code><a href="https://immunoplex.github.io/curveRbayes/reference/extract_curve_params.html">extract_curve_params()</a></code>
 
         </dt>
         <dd>Extract Curve-Level Posterior Summaries (from curveRbayes)</dd>
@@ -716,14 +719,14 @@
 
       <dl><dt>
 
-          <code><a href="https://rdrr.io/pkg/curveRbayes/man/build_stan_data.html" class="external-link">build_stan_data()</a></code>
+          <code><a href="https://immunoplex.github.io/curveRbayes/reference/build_stan_data.html">build_stan_data()</a></code>
 
         </dt>
         <dd>Build Stan Data List for a Model Family (from curveRbayes)</dd>
 
         <dt>
 
-          <code><a href="https://rdrr.io/pkg/curveRbayes/man/compute_dynamic_priors.html" class="external-link">compute_dynamic_priors()</a></code>
+          <code><a href="https://immunoplex.github.io/curveRbayes/reference/compute_dynamic_priors.html">compute_dynamic_priors()</a></code>
 
         </dt>
         <dd>Compute Data-Adaptive Priors for Stan Models (from curveRbayes)</dd>
@@ -739,14 +742,14 @@
 
       <dl><dt>
 
-          <code><a href="https://rdrr.io/pkg/curveRbayes/man/compute_loo.html" class="external-link">compute_loo()</a></code>
+          <code><a href="https://immunoplex.github.io/curveRbayes/reference/compute_loo.html">compute_loo()</a></code>
 
         </dt>
         <dd>Compute LOO-CV for a Fitted Bayesian Model (from curveRbayes)</dd>
 
         <dt>
 
-          <code><a href="https://rdrr.io/pkg/curveRbayes/man/compare_models_loo.html" class="external-link">compare_models_loo()</a></code>
+          <code><a href="https://immunoplex.github.io/curveRbayes/reference/compare_models_loo.html">compare_models_loo()</a></code>
 
         </dt>
         <dd>Compare Models via LOO-CV and Stacking Weights (from curveRbayes)</dd>
@@ -762,14 +765,14 @@
 
       <dl><dt>
 
-          <code><a href="https://rdrr.io/pkg/curveRbayes/man/predict_grid_bayes.html" class="external-link">predict_grid_bayes()</a></code>
+          <code><a href="https://immunoplex.github.io/curveRbayes/reference/predict_grid_bayes.html">predict_grid_bayes()</a></code>
 
         </dt>
-        <dd>Predict Grid Response from Posterior Draws (Bayesian, CDAN) (from curveRbayes)</dd>
+        <dd>Predict Grid Response from Posterior Draws (Bayesian) (from curveRbayes)</dd>
 
         <dt>
 
-          <code><a href="https://rdrr.io/pkg/curveRbayes/man/predict_samples_bayes.html" class="external-link">predict_samples_bayes()</a></code>
+          <code><a href="https://immunoplex.github.io/curveRbayes/reference/predict_samples_bayes.html">predict_samples_bayes()</a></code>
 
         </dt>
         <dd>Back-Calculate Sample Concentrations from Posterior Draws (from curveRbayes)</dd>
@@ -785,14 +788,14 @@
 
       <dl><dt>
 
-          <code><a href="https://rdrr.io/pkg/curveRbayes/man/summary_table_bayes.html" class="external-link">summary_table_bayes()</a></code>
+          <code><a href="https://immunoplex.github.io/curveRbayes/reference/summary_table_bayes.html">summary_table_bayes()</a></code>
 
         </dt>
         <dd>Extract a Per-Curve Summary Table from Bayesian Results (from curveRbayes)</dd>
 
         <dt>
 
-          <code><a href="https://rdrr.io/pkg/curveRbayes/man/collect_samples_bayes.html" class="external-link">collect_samples_bayes()</a></code>
+          <code><a href="https://immunoplex.github.io/curveRbayes/reference/collect_samples_bayes.html">collect_samples_bayes()</a></code>
 
         </dt>
         <dd>Collect All Sample Predictions from Bayesian Results (from curveRbayes)</dd>

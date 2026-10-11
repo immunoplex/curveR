@@ -36,7 +36,7 @@
 
     <a class="navbar-brand me-2" href="index.html">curveR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,6 +51,9 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="articles/curveR-methods-comparison.html">Standard Curve Calibration for Quantitative Immunoassays: A Comparison of Frequentist and Bayesian Approaches Using Five Nonlinear Sigmoidal Models
     </a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Downstream analysis</h6></li>
+    <li><a class="dropdown-item" href="articles/analysing-ispi-exports.html">Analysing I-SPI exports: censoring, predictive intervals and precision</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
@@ -172,7 +175,7 @@
 <span></span>
 <span><span class="co"># Fit Bayesian curves (requires CmdStan)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"curveRbayes"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">mp_bayes</span> <span class="op">&lt;-</span> <span class="fu">curveRbayes</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curveRbayes/man/fit_calibration_bayes.html" class="external-link">fit_calibration_bayes</a></span><span class="op">(</span></span>
+<span>  <span class="va">mp_bayes</span> <span class="op">&lt;-</span> <span class="fu">curveRbayes</span><span class="fu">::</span><span class="fu"><a href="https://immunoplex.github.io/curveRbayes/reference/fit_calibration_bayes.html">fit_calibration_bayes</a></span><span class="op">(</span></span>
 <span>    standards          <span class="op">=</span> <span class="va">std_pre</span><span class="op">$</span><span class="va">data</span>,</span>
 <span>    samples            <span class="op">=</span> <span class="va">bead_assay_example</span><span class="op">$</span><span class="va">samples</span>,</span>
 <span>    response_var       <span class="op">=</span> <span class="st">"mfi"</span>,</span>

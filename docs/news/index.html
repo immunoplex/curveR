@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">curveR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,6 +26,9 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/curveR-methods-comparison.html">Standard Curve Calibration for Quantitative Immunoassays: A Comparison of Frequentist and Bayesian Approaches Using Five Nonlinear Sigmoidal Models
     </a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Downstream analysis</h6></li>
+    <li><a class="dropdown-item" href="../articles/analysing-ispi-exports.html">Analysing I-SPI exports: censoring, predictive intervals and precision</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -42,6 +45,33 @@
       <small>Source: <a href="https://github.com/immunoplex/curveR/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.0" id="curver-030">curveR 0.3.0<a class="anchor" aria-label="anchor" href="#curver-030"></a></h2>
+<div class="section level3">
+<h3 id="package-versions-in-this-release-0-3-0">Package versions in this release<a class="anchor" aria-label="anchor" href="#package-versions-in-this-release-0-3-0"></a></h3>
+<table class="table"><thead><tr><th>Package</th>
+<th>Version</th>
+</tr></thead><tbody><tr><td>curveRcore</td>
+<td>0.5.0</td>
+</tr><tr><td>curveRfreq</td>
+<td>0.5.0</td>
+</tr><tr><td>curveRbayes</td>
+<td>0.5.0</td>
+</tr><tr><td>curveRweights</td>
+<td>0.2.1</td>
+</tr></tbody></table></div>
+<div class="section level3">
+<h3 id="whats-new-0-3-0">What’s new<a class="anchor" aria-label="anchor" href="#whats-new-0-3-0"></a></h3>
+<ul><li>
+<strong>Out-of-range test samples.</strong> Every back-calculated sample now carries censoring columns (<code>censor_class</code>, <code>censor_type</code>, <code>censor_lower</code>, <code>censor_upper</code>, from <code><a href="https://immunoplex.github.io/curveRcore/reference/classify_censoring_multiplate.html">curveRcore::classify_censoring_multiplate()</a></code>), asymmetric predictive quantiles (<code>conc_q_lo/med/hi</code>), threshold probabilities (<code>p_below_lloq</code>, <code>p_above_uloq</code>, <code>p_below_cutoff</code>) and censored-draw shares (<code>frac_draws_below_a/_above_d</code>), computed identically by both engines via <code><a href="https://immunoplex.github.io/curveRcore/reference/summarize_conc_draws.html">curveRcore::summarize_conc_draws()</a></code>.</li>
+<li>
+<strong>New vignette “Analysing I-SPI exports”</strong>: censored Gaussian (Tobit), survival-style and Bayesian censored analyses, threshold probabilities, and a simulation showing that inverse-variance weighting by a concentration-dependent SE biases group means toward the best-measured part of the curve — with a latent-variable alternative.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-0-3-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-3-0"></a></h3>
+<p>None. All new <code>$samples</code> columns are additive; <code>se_concentration</code> and <code>pcov</code> are unchanged.</p>
+</div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.0" id="curver-020">curveR 0.2.0<a class="anchor" aria-label="anchor" href="#curver-020"></a></h2>
 <div class="section level3">

@@ -233,13 +233,13 @@ delta-method uncertainty propagation.
 The preprocessing pipeline applied upstream of both fitting packages.
 
 - [`preprocess_standards()`](https://immunoplex.github.io/curveRcore/reference/preprocess_standards.html)
-  : Full Preprocessing Pipeline for Standard Curve Data (from
-  curveRcore)
+  : Full Preprocessing Pipeline for Standard Curve Data (mask-aware)
+  (from curveRcore)
 - [`compute_concentration()`](https://immunoplex.github.io/curveRcore/reference/compute_concentration.html)
   : Compute Concentration from Dilution and Undiluted Standard (from
   curveRcore)
 - [`compute_log_response()`](https://immunoplex.github.io/curveRcore/reference/compute_log_response.html)
-  : Log10-Transform the Assay Response (from curveRcore)
+  : Log10-Transform the Assay Response (mask-aware) (from curveRcore)
 - [`correct_prozone()`](https://immunoplex.github.io/curveRcore/reference/correct_prozone.html)
   : Correct the Prozone (Hook) Effect (from curveRcore)
 - [`perform_blank_operation()`](https://immunoplex.github.io/curveRcore/reference/perform_blank_operation.html)
@@ -380,13 +380,13 @@ Tidy extractors for multiplate calibration results.
 Bayesian hierarchical calibration via Stan. All curve_id values are
 fitted simultaneously in a single hierarchical model.
 
-- [`fit_calibration_bayes()`](https://rdrr.io/pkg/curveRbayes/man/fit_calibration_bayes.html)
+- [`fit_calibration_bayes()`](https://immunoplex.github.io/curveRbayes/reference/fit_calibration_bayes.html)
   : Fit Bayesian Hierarchical Calibration Curves (from curveRbayes)
-- [`compile_stan_model()`](https://rdrr.io/pkg/curveRbayes/man/compile_stan_model.html)
+- [`compile_stan_model()`](https://immunoplex.github.io/curveRbayes/reference/compile_stan_model.html)
   : Compile a curveRbayes Stan Model (Cached) (from curveRbayes)
-- [`fit_bayes_single()`](https://rdrr.io/pkg/curveRbayes/man/fit_bayes_single.html)
+- [`fit_bayes_single()`](https://immunoplex.github.io/curveRbayes/reference/fit_bayes_single.html)
   : Fit a Single Model Family via MCMC (from curveRbayes)
-- [`extract_curve_params()`](https://rdrr.io/pkg/curveRbayes/man/extract_curve_params.html)
+- [`extract_curve_params()`](https://immunoplex.github.io/curveRbayes/reference/extract_curve_params.html)
   : Extract Curve-Level Posterior Summaries (from curveRbayes)
 
 ## curveRbayes: Stan data and priors
@@ -394,18 +394,18 @@ fitted simultaneously in a single hierarchical model.
 Data preparation for Stan and data-adaptive weakly informative
 hyperprior construction.
 
-- [`build_stan_data()`](https://rdrr.io/pkg/curveRbayes/man/build_stan_data.html)
+- [`build_stan_data()`](https://immunoplex.github.io/curveRbayes/reference/build_stan_data.html)
   : Build Stan Data List for a Model Family (from curveRbayes)
-- [`compute_dynamic_priors()`](https://rdrr.io/pkg/curveRbayes/man/compute_dynamic_priors.html)
+- [`compute_dynamic_priors()`](https://immunoplex.github.io/curveRbayes/reference/compute_dynamic_priors.html)
   : Compute Data-Adaptive Priors for Stan Models (from curveRbayes)
 
 ## curveRbayes: LOO-CV model selection
 
 PSIS-LOO cross-validation and Bayesian stacking weights.
 
-- [`compute_loo()`](https://rdrr.io/pkg/curveRbayes/man/compute_loo.html)
+- [`compute_loo()`](https://immunoplex.github.io/curveRbayes/reference/compute_loo.html)
   : Compute LOO-CV for a Fitted Bayesian Model (from curveRbayes)
-- [`compare_models_loo()`](https://rdrr.io/pkg/curveRbayes/man/compare_models_loo.html)
+- [`compare_models_loo()`](https://immunoplex.github.io/curveRbayes/reference/compare_models_loo.html)
   : Compare Models via LOO-CV and Stacking Weights (from curveRbayes)
 
 ## curveRbayes: Posterior prediction and CDAN precision
@@ -413,10 +413,10 @@ PSIS-LOO cross-validation and Bayesian stacking weights.
 Posterior predictive grid (CDAN three-step procedure) and test-sample
 back-calculation.
 
-- [`predict_grid_bayes()`](https://rdrr.io/pkg/curveRbayes/man/predict_grid_bayes.html)
-  : Predict Grid Response from Posterior Draws (Bayesian, CDAN) (from
+- [`predict_grid_bayes()`](https://immunoplex.github.io/curveRbayes/reference/predict_grid_bayes.html)
+  : Predict Grid Response from Posterior Draws (Bayesian) (from
   curveRbayes)
-- [`predict_samples_bayes()`](https://rdrr.io/pkg/curveRbayes/man/predict_samples_bayes.html)
+- [`predict_samples_bayes()`](https://immunoplex.github.io/curveRbayes/reference/predict_samples_bayes.html)
   : Back-Calculate Sample Concentrations from Posterior Draws (from
   curveRbayes)
 
@@ -424,10 +424,10 @@ back-calculation.
 
 Tidy extractors for multiplate Bayesian calibration results.
 
-- [`summary_table_bayes()`](https://rdrr.io/pkg/curveRbayes/man/summary_table_bayes.html)
+- [`summary_table_bayes()`](https://immunoplex.github.io/curveRbayes/reference/summary_table_bayes.html)
   : Extract a Per-Curve Summary Table from Bayesian Results (from
   curveRbayes)
-- [`collect_samples_bayes()`](https://rdrr.io/pkg/curveRbayes/man/collect_samples_bayes.html)
+- [`collect_samples_bayes()`](https://immunoplex.github.io/curveRbayes/reference/collect_samples_bayes.html)
   : Collect All Sample Predictions from Bayesian Results (from
   curveRbayes)
 
@@ -486,3 +486,8 @@ The joint Bayesian location-scale model and supporting diagnostics.
   Sigmoidal
   Models](https://immunoplex.github.io/curveR/articles/curveR-methods-comparison.md)
   :
+
+### Downstream analysis
+
+- [Analysing I-SPI exports: censoring, predictive intervals and
+  precision](https://immunoplex.github.io/curveR/articles/analysing-ispi-exports.md):

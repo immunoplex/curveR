@@ -7,3 +7,8 @@
   Sigmoidal
   Models](https://immunoplex.github.io/curveR/articles/curveR-methods-comparison.md)
   :
+
+### Downstream analysis
+
+- [Analysing I-SPI exports: censoring, predictive intervals and
+  precision](https://immunoplex.github.io/curveR/articles/analysing-ispi-exports.md):

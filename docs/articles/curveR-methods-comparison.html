@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">curveR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,6 +48,9 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/curveR-methods-comparison.html">Standard Curve Calibration for Quantitative Immunoassays: A Comparison of Frequentist and Bayesian Approaches Using Five Nonlinear Sigmoidal Models
     </a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Downstream analysis</h6></li>
+    <li><a class="dropdown-item" href="../articles/analysing-ispi-exports.html">Analysing I-SPI exports: censoring, predictive intervals and precision</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -74,7 +77,7 @@
                         <h4 data-toc-skip class="author">Hardik Gupta,
 Michael Scot Zens, Seamus O. Stein, Anne G. Hoen</h4>
             
-            <h4 data-toc-skip class="date">2026-06-07</h4>
+            <h4 data-toc-skip class="date">2026-10-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/immunoplex/curveR/blob/HEAD/vignettes/curveR-methods-comparison.Rmd" class="external-link"><code>vignettes/curveR-methods-comparison.Rmd</code></a></small>
       <div class="d-none name"><code>curveR-methods-comparison.Rmd</code></div>
@@ -702,7 +705,7 @@ while still allowing plate-specific curves.</p>
 <h3 id="data-adaptive-priors">Data-Adaptive Priors<a class="anchor" aria-label="anchor" href="#data-adaptive-priors"></a>
 </h3>
 <p>All prior hyperparameters are computed from the preprocessed data by
-<code><a href="https://rdrr.io/pkg/curveRbayes/man/compute_dynamic_priors.html" class="external-link">compute_dynamic_priors()</a></code> and passed to Stan as data, making
+<code><a href="https://immunoplex.github.io/curveRbayes/reference/compute_dynamic_priors.html">compute_dynamic_priors()</a></code> and passed to Stan as data, making
 the models scale-invariant:</p>
 <p><span class="math display">\[
 \begin{aligned}
@@ -748,7 +751,7 @@ metadata.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/immunoplex/curveRbayes" class="external-link">curveRbayes</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">bayes_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/curveRbayes/man/fit_calibration_bayes.html" class="external-link">fit_calibration_bayes</a></span><span class="op">(</span></span>
+<span><span class="va">bayes_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://immunoplex.github.io/curveRbayes/reference/fit_calibration_bayes.html">fit_calibration_bayes</a></span><span class="op">(</span></span>
 <span>  standards          <span class="op">=</span> <span class="va">standards</span>,</span>
 <span>  samples            <span class="op">=</span> <span class="va">samples</span>,</span>
 <span>  response_var       <span class="op">=</span> <span class="st">"mfi"</span>,</span>
@@ -765,26 +768,29 @@ metadata.</p>
 <span>  verbose            <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">bayes_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/curveRbayes/man/summary_table_bayes.html" class="external-link">summary_table_bayes</a></span><span class="op">(</span><span class="va">bayes_result</span><span class="op">)</span></span>
+<span><span class="va">bayes_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://immunoplex.github.io/curveRbayes/reference/summary_table_bayes.html">summary_table_bayes</a></span><span class="op">(</span><span class="va">bayes_result</span><span class="op">)</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">bayes_tbl</span>, digits <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>             caption <span class="op">=</span> <span class="st">"Bayesian: posterior means and SDs by curve"</span><span class="op">)</span></span></code></pre></div>
 <table style="width:100%;" class="table">
 <caption>Bayesian: posterior means and SDs by curve</caption>
 <colgroup>
+<col width="6%">
 <col width="7%">
-<col width="9%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="4%">
+<col width="8%">
+<col width="11%">
+<col width="8%">
 <col width="6%">
-<col width="5%">
-<col width="6%">
-<col width="5%">
-<col width="6%">
-<col width="5%">
-<col width="6%">
-<col width="5%">
-<col width="6%">
-<col width="5%">
-<col width="10%">
-<col width="14%">
+<col width="7%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">curve_id</th>
@@ -801,55 +807,67 @@ metadata.</p>
 <th align="right">g_sd</th>
 <th align="right">n_divergent</th>
 <th align="right">n_max_treedepth</th>
+<th align="right">n_standards</th>
+<th align="right">n_blanks</th>
+<th align="left">noise_mode</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">1</td>
 <td align="left">logistic5</td>
-<td align="right">1.040</td>
-<td align="right">0.391</td>
-<td align="right">0.410</td>
+<td align="right">1.033</td>
+<td align="right">0.392</td>
+<td align="right">0.408</td>
 <td align="right">0.055</td>
-<td align="right">2.464</td>
-<td align="right">0.194</td>
+<td align="right">2.469</td>
+<td align="right">0.193</td>
 <td align="right">4.330</td>
-<td align="right">0.019</td>
-<td align="right">0.376</td>
-<td align="right">0.188</td>
+<td align="right">0.020</td>
+<td align="right">0.370</td>
+<td align="right">0.186</td>
 <td align="right">0</td>
 <td align="right">0</td>
+<td align="right">10</td>
+<td align="right">NA</td>
+<td align="left">FALSE</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
 <td align="left">logistic5</td>
-<td align="right">0.865</td>
-<td align="right">0.427</td>
-<td align="right">0.426</td>
-<td align="right">0.055</td>
-<td align="right">2.454</td>
-<td align="right">0.201</td>
+<td align="right">0.850</td>
+<td align="right">0.450</td>
+<td align="right">0.425</td>
+<td align="right">0.054</td>
+<td align="right">2.459</td>
+<td align="right">0.196</td>
 <td align="right">4.315</td>
 <td align="right">0.021</td>
-<td align="right">0.388</td>
-<td align="right">0.193</td>
+<td align="right">0.383</td>
+<td align="right">0.194</td>
 <td align="right">0</td>
 <td align="right">0</td>
+<td align="right">10</td>
+<td align="right">NA</td>
+<td align="left">FALSE</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
 <td align="left">logistic5</td>
-<td align="right">1.000</td>
-<td align="right">0.405</td>
+<td align="right">0.987</td>
 <td align="right">0.403</td>
+<td align="right">0.402</td>
 <td align="right">0.054</td>
-<td align="right">2.422</td>
-<td align="right">0.195</td>
-<td align="right">4.342</td>
+<td align="right">2.432</td>
+<td align="right">0.193</td>
+<td align="right">4.341</td>
 <td align="right">0.020</td>
-<td align="right">0.371</td>
-<td align="right">0.186</td>
+<td align="right">0.363</td>
+<td align="right">0.184</td>
 <td align="right">0</td>
 <td align="right">0</td>
+<td align="right">10</td>
+<td align="right">NA</td>
+<td align="left">FALSE</td>
 </tr>
 </tbody>
 </table>
@@ -912,7 +930,7 @@ for backwards compatibility.</p>
 called for every converged model using the delta method (O’Connell et
 al. 1993).</li>
 <li>
-<strong>Bayesian:</strong> <code><a href="https://rdrr.io/pkg/curveRbayes/man/predict_grid_bayes.html" class="external-link">predict_grid_bayes()</a></code> is
+<strong>Bayesian:</strong> <code><a href="https://immunoplex.github.io/curveRbayes/reference/predict_grid_bayes.html">predict_grid_bayes()</a></code> is
 called for every model using the CDAN approach (O’Malley 2008), with
 <code>n_draws_predict = 500</code> draws for the LOO-best model and
 <code>n_draws_ensemble = 260</code> draws for all other models. When
@@ -1136,10 +1154,10 @@ models</caption>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">bayes_c1</span><span class="op">$</span><span class="va">selection</span><span class="op">$</span><span class="va">loo_comparison</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">bayes_c1</span><span class="op">$</span><span class="va">selection</span><span class="op">$</span><span class="va">loo_comparison</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         model elpd_diff se_diff p_worse diag_diff      diag_elpd</span></span>
-<span><span class="co">#&gt;     logistic5       0.0     0.0      NA           5 k_psis &gt; 0.7</span></span>
-<span><span class="co">#&gt;  loglogistic5      -0.5     0.2    0.99   N &lt; 100 3 k_psis &gt; 0.7</span></span>
-<span><span class="co">#&gt;     logistic4      -6.9     1.3    1.00   N &lt; 100 2 k_psis &gt; 0.7</span></span>
-<span><span class="co">#&gt;     gompertz4     -13.5     2.8    1.00   N &lt; 100 5 k_psis &gt; 0.7</span></span></code></pre></div>
+<span><span class="co">#&gt;     logistic5       0.0     0.0      NA           3 k_psis &gt; 0.7</span></span>
+<span><span class="co">#&gt;  loglogistic5      -0.7     0.5    0.92   N &lt; 100 3 k_psis &gt; 0.7</span></span>
+<span><span class="co">#&gt;     logistic4      -5.7     1.3    1.00   N &lt; 100 4 k_psis &gt; 0.7</span></span>
+<span><span class="co">#&gt;     gompertz4     -13.7     2.6    1.00   N &lt; 100 2 k_psis &gt; 0.7</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Side-by-side selection comparison across all curves</span></span>
 <span><span class="va">sel_rows</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -1321,7 +1339,7 @@ RMSE of the back-calculated draws about the true concentration: <span class="mat
 <p><strong>Key distinction for test samples:</strong> When
 back-calculating concentrations for test samples (as opposed to the
 standard grid), the observed response <span class="math inline">\(y^*\)</span> is <em>already</em> a noisy
-measurement. Therefore, <code><a href="https://rdrr.io/pkg/curveRbayes/man/predict_samples_bayes.html" class="external-link">predict_samples_bayes()</a></code> does
+measurement. Therefore, <code><a href="https://immunoplex.github.io/curveRbayes/reference/predict_samples_bayes.html">predict_samples_bayes()</a></code> does
 <em>not</em> inject additional noise: it applies the inverse function
 <span class="math inline">\(f^{-1}(y^*;\,
 \boldsymbol{\theta}_s)\)</span> directly to the observed response at
@@ -1667,12 +1685,12 @@ range</strong> is the LLOQ-to-ULOQ span in log<span class="math inline">\(_{10}\
 <tr class="odd">
 <td align="left">Bayesian</td>
 <td align="left">gompertz4</td>
-<td align="right">1.33</td>
-<td align="right">2.47</td>
-<td align="right">21.35</td>
-<td align="right">293.47</td>
-<td align="right">1.14</td>
-<td align="right">13.75</td>
+<td align="right">1.32</td>
+<td align="right">2.48</td>
+<td align="right">20.80</td>
+<td align="right">298.84</td>
+<td align="right">1.16</td>
+<td align="right">14.37</td>
 </tr>
 <tr class="even">
 <td align="left">Frequentist</td>
@@ -1687,12 +1705,12 @@ range</strong> is the LLOQ-to-ULOQ span in log<span class="math inline">\(_{10}\
 <tr class="odd">
 <td align="left">Bayesian</td>
 <td align="left">logistic4</td>
-<td align="right">1.02</td>
-<td align="right">2.76</td>
-<td align="right">10.51</td>
-<td align="right">582.10</td>
-<td align="right">1.74</td>
-<td align="right">55.39</td>
+<td align="right">1.12</td>
+<td align="right">2.75</td>
+<td align="right">13.07</td>
+<td align="right">564.79</td>
+<td align="right">1.64</td>
+<td align="right">43.20</td>
 </tr>
 <tr class="even">
 <td align="left">Frequentist</td>
@@ -1707,12 +1725,12 @@ range</strong> is the LLOQ-to-ULOQ span in log<span class="math inline">\(_{10}\
 <tr class="odd">
 <td align="left">Bayesian</td>
 <td align="left">logistic5</td>
-<td align="right">0.64</td>
-<td align="right">2.97</td>
-<td align="right">4.35</td>
-<td align="right">940.38</td>
+<td align="right">0.62</td>
+<td align="right">2.96</td>
+<td align="right">4.18</td>
+<td align="right">907.01</td>
 <td align="right">2.34</td>
-<td align="right">216.27</td>
+<td align="right">217.03</td>
 </tr>
 <tr class="even">
 <td align="left">Frequentist</td>
@@ -1727,12 +1745,12 @@ range</strong> is the LLOQ-to-ULOQ span in log<span class="math inline">\(_{10}\
 <tr class="odd">
 <td align="left">Bayesian</td>
 <td align="left">loglogistic5</td>
-<td align="right">0.77</td>
-<td align="right">3.00</td>
-<td align="right">5.94</td>
-<td align="right">992.73</td>
-<td align="right">2.22</td>
-<td align="right">167.20</td>
+<td align="right">0.58</td>
+<td align="right">2.96</td>
+<td align="right">3.81</td>
+<td align="right">918.44</td>
+<td align="right">2.38</td>
+<td align="right">241.18</td>
 </tr>
 <tr class="even">
 <td align="left">Frequentist</td>
@@ -1800,7 +1818,7 @@ the bias term is undefined.</p>
 <div class="section level3">
 <h3 id="bayesian-sample-prediction">Bayesian Sample Prediction<a class="anchor" aria-label="anchor" href="#bayesian-sample-prediction"></a>
 </h3>
-<p>For test samples, <code><a href="https://rdrr.io/pkg/curveRbayes/man/predict_samples_bayes.html" class="external-link">predict_samples_bayes()</a></code> passes the
+<p>For test samples, <code><a href="https://immunoplex.github.io/curveRbayes/reference/predict_samples_bayes.html">predict_samples_bayes()</a></code> passes the
 observed log-response <span class="math inline">\(y^*\)</span> directly
 through the inverse at each posterior draw — without injecting
 additional noise, since the measurement noise is already embodied in
@@ -2062,29 +2080,29 @@ methods</caption>
 <td align="left">Bayesian</td>
 <td align="left">logistic4</td>
 <td align="left">1</td>
-<td align="right">1.9181</td>
-<td align="right">1.3041</td>
+<td align="right">1.9227</td>
+<td align="right">1.2965</td>
 </tr>
 <tr class="even">
 <td align="left">Bayesian</td>
 <td align="left">logistic5</td>
 <td align="left">1</td>
-<td align="right">2.0621</td>
-<td align="right">1.3451</td>
+<td align="right">2.0635</td>
+<td align="right">1.3435</td>
 </tr>
 <tr class="odd">
 <td align="left">Bayesian</td>
 <td align="left">gompertz4</td>
 <td align="left">1</td>
-<td align="right">1.7677</td>
-<td align="right">1.3772</td>
+<td align="right">1.7650</td>
+<td align="right">1.3779</td>
 </tr>
 <tr class="even">
 <td align="left">Bayesian</td>
 <td align="left">loglogistic5</td>
 <td align="left">1</td>
-<td align="right">2.4972</td>
-<td align="right">1.0266</td>
+<td align="right">2.5034</td>
+<td align="right">1.0227</td>
 </tr>
 <tr class="odd">
 <td align="left">Frequentist</td>
@@ -2118,29 +2136,29 @@ methods</caption>
 <td align="left">Bayesian</td>
 <td align="left">logistic4</td>
 <td align="left">2</td>
-<td align="right">1.9238</td>
-<td align="right">1.3364</td>
+<td align="right">1.9242</td>
+<td align="right">1.3407</td>
 </tr>
 <tr class="even">
 <td align="left">Bayesian</td>
 <td align="left">logistic5</td>
 <td align="left">2</td>
-<td align="right">2.0502</td>
-<td align="right">1.3804</td>
+<td align="right">2.0518</td>
+<td align="right">1.3818</td>
 </tr>
 <tr class="odd">
 <td align="left">Bayesian</td>
 <td align="left">gompertz4</td>
 <td align="left">2</td>
-<td align="right">1.7705</td>
-<td align="right">1.4017</td>
+<td align="right">1.7738</td>
+<td align="right">1.4059</td>
 </tr>
 <tr class="even">
 <td align="left">Bayesian</td>
 <td align="left">loglogistic5</td>
 <td align="left">2</td>
-<td align="right">2.4853</td>
-<td align="right">1.0690</td>
+<td align="right">2.4927</td>
+<td align="right">1.0647</td>
 </tr>
 <tr class="odd">
 <td align="left">Frequentist</td>
@@ -2174,29 +2192,29 @@ methods</caption>
 <td align="left">Bayesian</td>
 <td align="left">logistic4</td>
 <td align="left">3</td>
-<td align="right">1.8877</td>
-<td align="right">1.3351</td>
+<td align="right">1.8743</td>
+<td align="right">1.3405</td>
 </tr>
 <tr class="even">
 <td align="left">Bayesian</td>
 <td align="left">logistic5</td>
 <td align="left">3</td>
-<td align="right">2.0218</td>
-<td align="right">1.3797</td>
+<td align="right">2.0242</td>
+<td align="right">1.3745</td>
 </tr>
 <tr class="odd">
 <td align="left">Bayesian</td>
 <td align="left">gompertz4</td>
 <td align="left">3</td>
-<td align="right">1.7417</td>
-<td align="right">1.4086</td>
+<td align="right">1.7388</td>
+<td align="right">1.4089</td>
 </tr>
 <tr class="even">
 <td align="left">Bayesian</td>
 <td align="left">loglogistic5</td>
 <td align="left">3</td>
-<td align="right">2.4528</td>
-<td align="right">1.0543</td>
+<td align="right">2.4592</td>
+<td align="right">1.0490</td>
 </tr>
 </tbody>
 </table>
@@ -2595,12 +2613,12 @@ curves</caption>
 <td align="left">1</td>
 <td align="left">Bayesian</td>
 <td align="left">logistic5</td>
-<td align="right">1.6878</td>
-<td align="right">4.2940</td>
-<td align="right">4.9504</td>
-<td align="right">8035.165</td>
-<td align="right">5.0915</td>
-<td align="right">3848.720</td>
+<td align="right">1.6830</td>
+<td align="right">4.2929</td>
+<td align="right">4.8164</td>
+<td align="right">7689.801</td>
+<td align="right">4.9593</td>
+<td align="right">3719.232</td>
 </tr>
 <tr class="odd">
 <td align="left">2</td>
@@ -2617,12 +2635,12 @@ curves</caption>
 <td align="left">2</td>
 <td align="left">Bayesian</td>
 <td align="left">logistic5</td>
-<td align="right">1.5569</td>
-<td align="right">4.2723</td>
-<td align="right">4.9707</td>
-<td align="right">8218.040</td>
-<td align="right">5.1312</td>
-<td align="right">4140.595</td>
+<td align="right">1.5645</td>
+<td align="right">4.2738</td>
+<td align="right">5.2008</td>
+<td align="right">8441.367</td>
+<td align="right">5.3644</td>
+<td align="right">4196.584</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
@@ -2639,12 +2657,12 @@ curves</caption>
 <td align="left">3</td>
 <td align="left">Bayesian</td>
 <td align="left">logistic5</td>
-<td align="right">1.6568</td>
-<td align="right">4.3058</td>
-<td align="right">4.5382</td>
-<td align="right">6970.928</td>
-<td align="right">4.6641</td>
-<td align="right">3324.151</td>
+<td align="right">1.6539</td>
+<td align="right">4.3057</td>
+<td align="right">4.4397</td>
+<td align="right">7055.344</td>
+<td align="right">4.5621</td>
+<td align="right">3310.789</td>
 </tr>
 </tbody>
 </table>
@@ -2776,38 +2794,38 @@ blue), LODs (solid orange), and MDC (triangles).
 <tr class="odd">
 <td align="left">Grid: predicted response</td>
 <td align="right">200</td>
-<td align="right">-0.2998</td>
-<td align="right">0.3055</td>
-<td align="right">0.4107</td>
-<td align="right">0.9869</td>
-<td align="right">0.9260</td>
+<td align="right">-0.3154</td>
+<td align="right">0.3224</td>
+<td align="right">0.4335</td>
+<td align="right">0.9856</td>
+<td align="right">0.9190</td>
 </tr>
 <tr class="even">
 <td align="left">Samples: log10(concentration)</td>
 <td align="right">20</td>
-<td align="right">-0.0554</td>
-<td align="right">0.1009</td>
-<td align="right">0.1989</td>
-<td align="right">0.9896</td>
-<td align="right">0.9747</td>
+<td align="right">-0.2071</td>
+<td align="right">0.2540</td>
+<td align="right">0.3734</td>
+<td align="right">0.9667</td>
+<td align="right">0.9068</td>
 </tr>
 <tr class="odd">
 <td align="left">Grid: pcov (non-capped)</td>
 <td align="right">90</td>
-<td align="right">-11.0307</td>
-<td align="right">12.4276</td>
-<td align="right">23.6826</td>
-<td align="right">0.7853</td>
-<td align="right">0.7048</td>
+<td align="right">-11.5321</td>
+<td align="right">13.0522</td>
+<td align="right">24.6051</td>
+<td align="right">0.7656</td>
+<td align="right">0.6856</td>
 </tr>
 <tr class="even">
 <td align="left">Samples: pcov</td>
 <td align="right">20</td>
-<td align="right">-60.6441</td>
-<td align="right">60.6441</td>
-<td align="right">65.6625</td>
-<td align="right">0.8714</td>
-<td align="right">0.3396</td>
+<td align="right">-32.4869</td>
+<td align="right">34.9564</td>
+<td align="right">43.7063</td>
+<td align="right">0.7729</td>
+<td align="right">0.5155</td>
 </tr>
 </tbody>
 </table>
@@ -3265,7 +3283,7 @@ Student-t likelihood in Stan) is a natural next step.</p>
 models support blank data via an optional second likelihood: <span class="math inline">\(y_{\text{blank}} \sim \text{Student-}t(\nu, a_i,
 \sigma_{\text{blank}})\)</span>, where <span class="math inline">\(\sigma_{\text{blank}}\)</span> is a separate noise
 parameter for blank wells. This anchors the lower asymptote <span class="math inline">\(a_i\)</span> more precisely when blank data are
-available and is passed through <code><a href="https://rdrr.io/pkg/curveRbayes/man/build_stan_data.html" class="external-link">build_stan_data()</a></code>. The
+available and is passed through <code><a href="https://immunoplex.github.io/curveRbayes/reference/build_stan_data.html">build_stan_data()</a></code>. The
 current vignette does not demonstrate this feature explicitly; a
 dedicated section showing the effect of blank integration on the
 precision profile near the LLOQ would be a valuable addition to a data
@@ -3699,11 +3717,12 @@ reference for users writing downstream analysis or reporting code.</p>
 <span><span class="co">#&gt; Best model parameters:</span></span>
 <span><span class="va">best_ens</span> <span class="op">&lt;-</span> <span class="va">cr</span><span class="op">$</span><span class="va">ensemble</span><span class="op">[[</span><span class="va">cr</span><span class="op">$</span><span class="va">selection</span><span class="op">$</span><span class="va">best_model_name</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">best_ens</span><span class="op">$</span><span class="va">parameters</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   term  estimate  std_error</span></span>
-<span><span class="co">#&gt; 1    a 1.7740750 0.12594608</span></span>
-<span><span class="co">#&gt; 2    d 4.3391150 0.02610856</span></span>
-<span><span class="co">#&gt; 3    c 1.9835127 0.06453522</span></span>
-<span><span class="co">#&gt; 4    b 0.4836332 0.04526522</span></span>
+<span><span class="co">#&gt;          term   estimate  std_error</span></span>
+<span><span class="co">#&gt; 1           a 1.77407502 0.12594608</span></span>
+<span><span class="co">#&gt; 2           d 4.33911498 0.02610856</span></span>
+<span><span class="co">#&gt; 3           c 1.98351270 0.06453522</span></span>
+<span><span class="co">#&gt; 4           b 0.48363323 0.04526522</span></span>
+<span><span class="co">#&gt; 5 sigma_resid 0.04813392         NA</span></span>
 <span></span>
 <span><span class="co"># ── Sample predictions (first 5 rows) ──</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">cr</span><span class="op">$</span><span class="va">samples</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -4140,10 +4159,10 @@ models must be added to <code>curveRbayes</code>:</p>
 <li>Register the <code>.stan</code> file path in
 <code>stan_model_path()</code>.</li>
 <li>Add the parameter extraction pattern in
-<code><a href="https://rdrr.io/pkg/curveRbayes/man/extract_curve_params.html" class="external-link">extract_curve_params()</a></code>.</li>
+<code><a href="https://immunoplex.github.io/curveRbayes/reference/extract_curve_params.html">extract_curve_params()</a></code>.</li>
 <li>Add data-adaptive prior computation in
-<code><a href="https://rdrr.io/pkg/curveRbayes/man/compute_dynamic_priors.html" class="external-link">compute_dynamic_priors()</a></code>.</li>
-<li>Add Stan data construction in <code><a href="https://rdrr.io/pkg/curveRbayes/man/build_stan_data.html" class="external-link">build_stan_data()</a></code>.</li>
+<code><a href="https://immunoplex.github.io/curveRbayes/reference/compute_dynamic_priors.html">compute_dynamic_priors()</a></code>.</li>
+<li>Add Stan data construction in <code><a href="https://immunoplex.github.io/curveRbayes/reference/build_stan_data.html">build_stan_data()</a></code>.</li>
 </ol>
 <p>No changes to <code>curveRfreq</code> are required beyond ensuring
 the model name is passed in <code>model_names</code>.</p>
@@ -4275,19 +4294,19 @@ reproduce a curveR analysis from a published methods section.</p>
 <tbody>
 <tr class="odd">
 <td align="left">curveRcore version</td>
-<td align="left">0.2.0</td>
+<td align="left">0.5.0</td>
 </tr>
 <tr class="even">
 <td align="left">curveRfreq version</td>
-<td align="left">0.2.0</td>
+<td align="left">0.5.0</td>
 </tr>
 <tr class="odd">
 <td align="left">curveRbayes version</td>
-<td align="left">0.2.0</td>
+<td align="left">0.5.0</td>
 </tr>
 <tr class="even">
 <td align="left">cmdstanr version</td>
-<td align="left">0.9.0</td>
+<td align="left">0.9.0.9002</td>
 </tr>
 <tr class="odd">
 <td align="left">CmdStan version</td>
@@ -4295,7 +4314,7 @@ reproduce a curveR analysis from a published methods section.</p>
 </tr>
 <tr class="even">
 <td align="left">R version</td>
-<td align="left">4.5.1</td>
+<td align="left">4.5.2</td>
 </tr>
 <tr class="odd">
 <td align="left">Dataset name</td>
@@ -4566,12 +4585,12 @@ discarded.</caption>
 <tr class="odd">
 <td align="left">FALSE</td>
 <td align="right">1</td>
-<td align="right">24</td>
+<td align="right">50</td>
 </tr>
 <tr class="even">
 <td align="left">TRUE</td>
 <td align="right">0</td>
-<td align="right">35</td>
+<td align="right">9</td>
 </tr>
 </tbody>
 </table>
@@ -4729,9 +4748,9 @@ the LLOQ and ULOQ.” ) )</p>
 cat("── Package versions ──────────────────────────────────────\n")
 #&gt; ── Package versions ──────────────────────────────────────
 cat("curveRcore    :", as.character(packageVersion("curveRcore")),    "\n")
-#&gt; curveRcore    : 0.2.0
+#&gt; curveRcore    : 0.5.0
 cat("curveRfreq    :", as.character(packageVersion("curveRfreq")),    "\n")
-#&gt; curveRfreq    : 0.2.0
+#&gt; curveRfreq    : 0.5.0
 if (has_bayes) {
   cat("curveRbayes   :", as.character(packageVersion("curveRbayes")),  "\n")
   cat("cmdstanr      :", as.character(packageVersion("cmdstanr")),     "\n")
@@ -4739,12 +4758,12 @@ if (has_bayes) {
       tryCatch(cmdstanr::cmdstan_version(), error = function(e) FALSE),
       "\n")
 }
-#&gt; curveRbayes   : 0.2.0 
-#&gt; cmdstanr      : 0.9.0 
+#&gt; curveRbayes   : 0.5.0 
+#&gt; cmdstanr      : 0.9.0.9002 
 #&gt; CmdStan       : 2.38.0
 if (requireNamespace("curveRweights", quietly = TRUE))
   cat("curveRweights :", as.character(packageVersion("curveRweights")), "\n")
-#&gt; curveRweights : 0.2.0
+#&gt; curveRweights : 0.2.1
 cat("posterior     :", as.character(packageVersion("posterior")),    "\n")
 #&gt; posterior     : 1.7.0
 cat("loo           :", as.character(packageVersion("loo")),          "\n")
@@ -4755,9 +4774,9 @@ cat("\n── Full session info ────────────────
 #&gt; 
 #&gt; ── Full session info ──────────────────────────────────────
 sessionInfo()
-#&gt; R version 4.5.1 (2025-06-13 ucrt)
+#&gt; R version 4.5.2 (2025-10-31 ucrt)
 #&gt; Platform: x86_64-w64-mingw32/x64
-#&gt; Running under: Windows 11 x64 (build 26100)
+#&gt; Running under: Windows 11 x64 (build 26200)
 #&gt; 
 #&gt; Matrix products: default
 #&gt;   LAPACK version 3.12.1
@@ -4777,8 +4796,8 @@ sessionInfo()
 #&gt; 
 #&gt; other attached packages:
 #&gt; [1] metafor_4.8-0       numDeriv_2016.8-1.1 metadat_1.4-0      
-#&gt; [4] Matrix_1.7-3        curveRweights_0.2.0 curveRbayes_0.2.0  
-#&gt; [7] curveR_0.2.0        curveRfreq_0.2.0    curveRcore_0.2.0   
+#&gt; [4] Matrix_1.7-4        curveRweights_0.2.1 curveRbayes_0.5.0  
+#&gt; [7] curveR_0.3.0        curveRfreq_0.5.0    curveRcore_0.5.0   
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
 #&gt;  [1] tidyselect_1.2.1      dplyr_1.2.1           farver_2.1.2         
@@ -4786,33 +4805,33 @@ sessionInfo()
 #&gt;  [7] TH.data_1.1-5         tensorA_0.36.2.1      mathjaxr_2.0-0       
 #&gt; [10] digest_0.6.39         estimability_1.5.1    lifecycle_1.0.5      
 #&gt; [13] StanHeaders_2.32.10   survival_3.8-3        processx_3.9.0       
-#&gt; [16] magrittr_2.0.5        posterior_1.7.0       compiler_4.5.1       
-#&gt; [19] rlang_1.2.0           sass_0.4.10           tools_4.5.1          
+#&gt; [16] magrittr_2.0.5        posterior_1.7.0       compiler_4.5.2       
+#&gt; [19] rlang_1.2.0           sass_0.4.10           tools_4.5.2          
 #&gt; [22] yaml_2.3.12           data.table_1.18.4     knitr_1.51           
 #&gt; [25] bridgesampling_1.2-1  htmlwidgets_1.6.4     curl_7.1.0           
 #&gt; [28] pkgbuild_1.4.8        plyr_1.8.9            RColorBrewer_1.1-3   
-#&gt; [31] cmdstanr_0.9.0        abind_1.4-8           multcomp_1.4-30      
-#&gt; [34] withr_3.0.2           desc_1.4.3            stats4_4.5.1         
-#&gt; [37] grid_4.5.1            inline_0.3.21         xtable_1.8-8         
+#&gt; [31] cmdstanr_0.9.0.9002   abind_1.4-8           multcomp_1.4-30      
+#&gt; [34] withr_3.0.2           desc_1.4.3            stats4_4.5.2         
+#&gt; [37] grid_4.5.2            inline_0.3.21         xtable_1.8-8         
 #&gt; [40] ggplot2_4.0.3         emmeans_2.0.2         scales_1.4.0         
 #&gt; [43] MASS_7.3-65           cli_3.6.6             mvtnorm_1.3-5        
 #&gt; [46] rmarkdown_2.31        ragg_1.5.1            generics_0.1.4       
-#&gt; [49] otel_0.2.0            RcppParallel_5.1.11-2 rstudioapi_0.18.0    
-#&gt; [52] reshape2_1.4.5        cachem_1.1.0          rstan_2.32.7         
-#&gt; [55] stringr_1.6.0         splines_4.5.1         bayesplot_1.15.0     
-#&gt; [58] parallel_4.5.1        matrixStats_1.5.0     brms_2.23.0          
-#&gt; [61] vctrs_0.7.3           V8_8.0.1              sandwich_3.1-1       
-#&gt; [64] jsonlite_2.0.0        minpack.lm_1.2-4      callr_3.7.6          
-#&gt; [67] systemfonts_1.3.2     jquerylib_0.1.4       glue_1.8.1           
-#&gt; [70] pkgdown_2.2.0         codetools_0.2-20      ps_1.9.3             
-#&gt; [73] distributional_0.7.0  stringi_1.8.7         gtable_0.3.6         
-#&gt; [76] QuickJSR_1.9.2        tibble_3.3.1          pillar_1.11.1        
-#&gt; [79] htmltools_0.5.9       Brobdingnag_1.2-9     R6_2.6.1             
-#&gt; [82] textshaping_1.0.5     evaluate_1.0.5        lattice_0.22-7       
-#&gt; [85] backports_1.5.1       bslib_0.11.0          rstantools_2.6.0     
-#&gt; [88] Rcpp_1.1.1-1.1        gridExtra_2.3         coda_0.19-4.1        
-#&gt; [91] nlme_3.1-168          checkmate_2.3.4       xfun_0.57            
-#&gt; [94] fs_2.1.0              zoo_1.8-15            pkgconfig_2.0.3</code></pre>
+#&gt; [49] otel_0.2.0            RcppParallel_5.1.11-2 reshape2_1.4.5       
+#&gt; [52] cachem_1.1.0          rstan_2.32.7          stringr_1.6.0        
+#&gt; [55] splines_4.5.2         bayesplot_1.15.0      parallel_4.5.2       
+#&gt; [58] matrixStats_1.5.0     brms_2.23.0           vctrs_0.7.3          
+#&gt; [61] V8_8.0.1              sandwich_3.1-1        jsonlite_2.0.0       
+#&gt; [64] minpack.lm_1.2-4      callr_3.7.6           systemfonts_1.3.2    
+#&gt; [67] jquerylib_0.1.4       glue_1.8.1            pkgdown_2.2.0        
+#&gt; [70] codetools_0.2-20      ps_1.9.3              distributional_0.8.1 
+#&gt; [73] stringi_1.8.7         gtable_0.3.6          QuickJSR_1.9.2       
+#&gt; [76] tibble_3.3.1          pillar_1.11.1         htmltools_0.5.9      
+#&gt; [79] Brobdingnag_1.2-9     R6_2.6.1              textshaping_1.0.5    
+#&gt; [82] evaluate_1.0.5        lattice_0.22-7        backports_1.5.1      
+#&gt; [85] bslib_0.11.0          rstantools_2.6.0      Rcpp_1.1.1-1.1       
+#&gt; [88] gridExtra_2.3         coda_0.19-4.1         nlme_3.1-168         
+#&gt; [91] checkmate_2.3.4       xfun_0.57             fs_2.1.0             
+#&gt; [94] zoo_1.8-15            pkgconfig_2.0.3</code></pre>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-belanger_effect_1996" class="csl-entry">
 Belanger, Bruce A., Marie Davidian, and David M. Giltinan. 1996.

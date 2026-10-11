@@ -500,7 +500,7 @@ still allowing plate-specific curves.
 ### Data-Adaptive Priors
 
 All prior hyperparameters are computed from the preprocessed data by
-[`compute_dynamic_priors()`](https://rdrr.io/pkg/curveRbayes/man/compute_dynamic_priors.html)
+[`compute_dynamic_priors()`](https://immunoplex.github.io/curveRbayes/reference/compute_dynamic_priors.html)
 and passed to Stan as data, making the models scale-invariant:
 
 \\ \begin{aligned} \mu_a &\sim \mathcal{N}(y\_{\min},\\ 0.3\Delta_y)
@@ -564,11 +564,11 @@ knitr::kable(bayes_tbl, digits = 3,
              caption = "Bayesian: posterior means and SDs by curve")
 ```
 
-| curve_id | best_model | a_mean | a_sd | b_mean | b_sd | c_mean | c_sd | d_mean | d_sd | g_mean | g_sd | n_divergent | n_max_treedepth |
-|:---|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 1 | logistic5 | 1.040 | 0.391 | 0.410 | 0.055 | 2.464 | 0.194 | 4.330 | 0.019 | 0.376 | 0.188 | 0 | 0 |
-| 2 | logistic5 | 0.865 | 0.427 | 0.426 | 0.055 | 2.454 | 0.201 | 4.315 | 0.021 | 0.388 | 0.193 | 0 | 0 |
-| 3 | logistic5 | 1.000 | 0.405 | 0.403 | 0.054 | 2.422 | 0.195 | 4.342 | 0.020 | 0.371 | 0.186 | 0 | 0 |
+| curve_id | best_model | a_mean | a_sd | b_mean | b_sd | c_mean | c_sd | d_mean | d_sd | g_mean | g_sd | n_divergent | n_max_treedepth | n_standards | n_blanks | noise_mode |
+|:---|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---|
+| 1 | logistic5 | 1.033 | 0.392 | 0.408 | 0.055 | 2.469 | 0.193 | 4.330 | 0.020 | 0.370 | 0.186 | 0 | 0 | 10 | NA | FALSE |
+| 2 | logistic5 | 0.850 | 0.450 | 0.425 | 0.054 | 2.459 | 0.196 | 4.315 | 0.021 | 0.383 | 0.194 | 0 | 0 | 10 | NA | FALSE |
+| 3 | logistic5 | 0.987 | 0.403 | 0.402 | 0.054 | 2.432 | 0.193 | 4.341 | 0.020 | 0.363 | 0.184 | 0 | 0 | 10 | NA | FALSE |
 
 Bayesian: posterior means and SDs by curve
 
@@ -624,7 +624,7 @@ for backwards compatibility.
   is called for every converged model using the delta method (O’Connell
   et al. 1993).
 - **Bayesian:**
-  [`predict_grid_bayes()`](https://rdrr.io/pkg/curveRbayes/man/predict_grid_bayes.html)
+  [`predict_grid_bayes()`](https://immunoplex.github.io/curveRbayes/reference/predict_grid_bayes.html)
   is called for every model using the CDAN approach (O’Malley 2008),
   with `n_draws_predict = 500` draws for the LOO-best model and
   `n_draws_ensemble = 260` draws for all other models. When more than
@@ -720,10 +720,10 @@ cat("Fallback triggered           :", bayes_c1$selection$fallback, "\n")
 if (!is.null(bayes_c1$selection$loo_comparison))
   print(bayes_c1$selection$loo_comparison)
 #>         model elpd_diff se_diff p_worse diag_diff      diag_elpd
-#>     logistic5       0.0     0.0      NA           5 k_psis > 0.7
-#>  loglogistic5      -0.5     0.2    0.99   N < 100 3 k_psis > 0.7
-#>     logistic4      -6.9     1.3    1.00   N < 100 2 k_psis > 0.7
-#>     gompertz4     -13.5     2.8    1.00   N < 100 5 k_psis > 0.7
+#>     logistic5       0.0     0.0      NA           3 k_psis > 0.7
+#>  loglogistic5      -0.7     0.5    0.92   N < 100 3 k_psis > 0.7
+#>     logistic4      -5.7     1.3    1.00   N < 100 4 k_psis > 0.7
+#>     gompertz4     -13.7     2.6    1.00   N < 100 2 k_psis > 0.7
 ```
 
 ``` r
@@ -849,7 +849,7 @@ back-calculated draws about the true concentration: \\
 **Key distinction for test samples:** When back-calculating
 concentrations for test samples (as opposed to the standard grid), the
 observed response \\y^\*\\ is *already* a noisy measurement. Therefore,
-[`predict_samples_bayes()`](https://rdrr.io/pkg/curveRbayes/man/predict_samples_bayes.html)
+[`predict_samples_bayes()`](https://immunoplex.github.io/curveRbayes/reference/predict_samples_bayes.html)
 does *not* inject additional noise: it applies the inverse function
 \\f^{-1}(y^\*;\\ \boldsymbol{\theta}\_s)\\ directly to the observed
 response at each draw. The result is a posterior distribution of
@@ -1186,13 +1186,13 @@ knitr::kable(
 
 | method | model | lloq_log10 | uloq_log10 | lloq_conc | uloq_conc | dynamic_range_log10 | dynamic_range_fold |
 |:---|:---|---:|---:|---:|---:|---:|---:|
-| Bayesian | gompertz4 | 1.33 | 2.47 | 21.35 | 293.47 | 1.14 | 13.75 |
+| Bayesian | gompertz4 | 1.32 | 2.48 | 20.80 | 298.84 | 1.16 | 14.37 |
 | Frequentist | gompertz4 | NA | NA | NA | NA | 0.00 | 1.00 |
-| Bayesian | logistic4 | 1.02 | 2.76 | 10.51 | 582.10 | 1.74 | 55.39 |
+| Bayesian | logistic4 | 1.12 | 2.75 | 13.07 | 564.79 | 1.64 | 43.20 |
 | Frequentist | logistic4 | 1.16 | 2.83 | 14.56 | 674.03 | 1.67 | 46.28 |
-| Bayesian | logistic5 | 0.64 | 2.97 | 4.35 | 940.38 | 2.34 | 216.27 |
+| Bayesian | logistic5 | 0.62 | 2.96 | 4.18 | 907.01 | 2.34 | 217.03 |
 | Frequentist | logistic5 | NA | NA | NA | NA | 0.00 | 1.00 |
-| Bayesian | loglogistic5 | 0.77 | 3.00 | 5.94 | 992.73 | 2.22 | 167.20 |
+| Bayesian | loglogistic5 | 0.58 | 2.96 | 3.81 | 918.44 | 2.38 | 241.18 |
 | Frequentist | loglogistic5 | NA | NA | NA | NA | 0.00 | 1.00 |
 
 Dynamic range at 20% pcov threshold — all models × both methods
@@ -1254,7 +1254,7 @@ term is undefined.
 ### Bayesian Sample Prediction
 
 For test samples,
-[`predict_samples_bayes()`](https://rdrr.io/pkg/curveRbayes/man/predict_samples_bayes.html)
+[`predict_samples_bayes()`](https://immunoplex.github.io/curveRbayes/reference/predict_samples_bayes.html)
 passes the observed log-response \\y^\*\\ directly through the inverse
 at each posterior draw — without injecting additional noise, since the
 measurement noise is already embodied in \\y^\*\\: \\ x_s^\* =
@@ -1483,26 +1483,26 @@ knitr::kable(sens_df, digits = 4,
 | Frequentist | logistic5    | 1        |       2.0555 |              1.2909 |
 | Frequentist | gompertz4    | 1        |       1.9746 |              1.4161 |
 | Frequentist | loglogistic5 | 1        |       3.1019 |              0.6086 |
-| Bayesian    | logistic4    | 1        |       1.9181 |              1.3041 |
-| Bayesian    | logistic5    | 1        |       2.0621 |              1.3451 |
-| Bayesian    | gompertz4    | 1        |       1.7677 |              1.3772 |
-| Bayesian    | loglogistic5 | 1        |       2.4972 |              1.0266 |
+| Bayesian    | logistic4    | 1        |       1.9227 |              1.2965 |
+| Bayesian    | logistic5    | 1        |       2.0635 |              1.3435 |
+| Bayesian    | gompertz4    | 1        |       1.7650 |              1.3779 |
+| Bayesian    | loglogistic5 | 1        |       2.5034 |              1.0227 |
 | Frequentist | logistic4    | 2        |       1.8336 |              1.3179 |
 | Frequentist | logistic5    | 2        |       1.8647 |              1.2827 |
 | Frequentist | gompertz4    | 2        |       1.7131 |              1.3854 |
 | Frequentist | loglogistic5 | 2        |       2.5081 |              0.9807 |
-| Bayesian    | logistic4    | 2        |       1.9238 |              1.3364 |
-| Bayesian    | logistic5    | 2        |       2.0502 |              1.3804 |
-| Bayesian    | gompertz4    | 2        |       1.7705 |              1.4017 |
-| Bayesian    | loglogistic5 | 2        |       2.4853 |              1.0690 |
+| Bayesian    | logistic4    | 2        |       1.9242 |              1.3407 |
+| Bayesian    | logistic5    | 2        |       2.0518 |              1.3818 |
+| Bayesian    | gompertz4    | 2        |       1.7738 |              1.4059 |
+| Bayesian    | loglogistic5 | 2        |       2.4927 |              1.0647 |
 | Frequentist | logistic4    | 3        |       1.9122 |              1.3537 |
 | Frequentist | logistic5    | 3        |       1.9623 |              1.3117 |
 | Frequentist | gompertz4    | 3        |       1.9266 |              1.4418 |
 | Frequentist | loglogistic5 | 3        |       0.5943 |              0.8671 |
-| Bayesian    | logistic4    | 3        |       1.8877 |              1.3351 |
-| Bayesian    | logistic5    | 3        |       2.0218 |              1.3797 |
-| Bayesian    | gompertz4    | 3        |       1.7417 |              1.4086 |
-| Bayesian    | loglogistic5 | 3        |       2.4528 |              1.0543 |
+| Bayesian    | logistic4    | 3        |       1.8743 |              1.3405 |
+| Bayesian    | logistic5    | 3        |       2.0242 |              1.3745 |
+| Bayesian    | gompertz4    | 3        |       1.7388 |              1.4089 |
+| Bayesian    | loglogistic5 | 3        |       2.4592 |              1.0490 |
 
 Assay sensitivity: dy/dx at inflection point, all models and methods
 
@@ -1821,11 +1821,11 @@ if (length(dl_rows) > 0) {
 | curve_id | method | model | llod_response | ulod_response | mdc_lower_conc | mdc_upper_conc | rdl_lower_conc | rdl_upper_conc |
 |:---|:---|:---|---:|---:|---:|---:|---:|---:|
 | 1 | Frequentist | logistic4 | 2.0209 | 4.2879 | 7.9486 | 7361.536 | 8.1486 | 3402.040 |
-| 1 | Bayesian | logistic5 | 1.6878 | 4.2940 | 4.9504 | 8035.165 | 5.0915 | 3848.720 |
+| 1 | Bayesian | logistic5 | 1.6830 | 4.2929 | 4.8164 | 7689.801 | 4.9593 | 3719.232 |
 | 2 | Frequentist | logistic4 | 1.8721 | 4.2539 | 9.4239 | 8001.526 | 9.8276 | 3223.039 |
-| 2 | Bayesian | logistic5 | 1.5569 | 4.2723 | 4.9707 | 8218.040 | 5.1312 | 4140.595 |
+| 2 | Bayesian | logistic5 | 1.5645 | 4.2738 | 5.2008 | 8441.367 | 5.3644 | 4196.584 |
 | 3 | Frequentist | logistic4 | 2.0013 | 4.3023 | 7.9851 | 6468.643 | 8.1978 | 2957.016 |
-| 3 | Bayesian | logistic5 | 1.6568 | 4.3058 | 4.5382 | 6970.928 | 4.6641 | 3324.151 |
+| 3 | Bayesian | logistic5 | 1.6539 | 4.3057 | 4.4397 | 7055.344 | 4.5621 | 3310.789 |
 
 Detection limits comparison: frequentist vs Bayesian, all curves
 
@@ -1935,10 +1935,10 @@ if (!is.null(sample_comp)) {
 
 | Quantity                      |   N |     Bias |     MAE |    RMSE |    Cor |    CCC |
 |:------------------------------|----:|---------:|--------:|--------:|-------:|-------:|
-| Grid: predicted response      | 200 |  -0.2998 |  0.3055 |  0.4107 | 0.9869 | 0.9260 |
-| Samples: log10(concentration) |  20 |  -0.0554 |  0.1009 |  0.1989 | 0.9896 | 0.9747 |
-| Grid: pcov (non-capped)       |  90 | -11.0307 | 12.4276 | 23.6826 | 0.7853 | 0.7048 |
-| Samples: pcov                 |  20 | -60.6441 | 60.6441 | 65.6625 | 0.8714 | 0.3396 |
+| Grid: predicted response      | 200 |  -0.3154 |  0.3224 |  0.4335 | 0.9856 | 0.9190 |
+| Samples: log10(concentration) |  20 |  -0.2071 |  0.2540 |  0.3734 | 0.9667 | 0.9068 |
+| Grid: pcov (non-capped)       |  90 | -11.5321 | 13.0522 | 24.6051 | 0.7656 | 0.6856 |
+| Samples: pcov                 |  20 | -32.4869 | 34.9564 | 43.7063 | 0.7729 | 0.5155 |
 
 Agreement between frequentist and Bayesian methods (curve_id = 1)
 
@@ -2377,7 +2377,7 @@ blank data via an optional second likelihood: \\y\_{\text{blank}} \sim
 \\\sigma\_{\text{blank}}\\ is a separate noise parameter for blank
 wells. This anchors the lower asymptote \\a_i\\ more precisely when
 blank data are available and is passed through
-[`build_stan_data()`](https://rdrr.io/pkg/curveRbayes/man/build_stan_data.html).
+[`build_stan_data()`](https://immunoplex.github.io/curveRbayes/reference/build_stan_data.html).
 The current vignette does not demonstrate this feature explicitly; a
 dedicated section showing the effect of blank integration on the
 precision profile near the LLOQ would be a valuable addition to a data
@@ -2817,11 +2817,12 @@ cat("\nBest model parameters:\n")
 #> Best model parameters:
 best_ens <- cr$ensemble[[cr$selection$best_model_name]]
 print(best_ens$parameters)
-#>   term  estimate  std_error
-#> 1    a 1.7740750 0.12594608
-#> 2    d 4.3391150 0.02610856
-#> 3    c 1.9835127 0.06453522
-#> 4    b 0.4836332 0.04526522
+#>          term   estimate  std_error
+#> 1           a 1.77407502 0.12594608
+#> 2           d 4.33911498 0.02610856
+#> 3           c 1.98351270 0.06453522
+#> 4           b 0.48363323 0.04526522
+#> 5 sigma_resid 0.04813392         NA
 
 # ── Sample predictions (first 5 rows) ──
 if (!is.null(cr$samples)) {
@@ -3168,11 +3169,11 @@ be added to `curveRbayes`:
 7.  Add `inst/stan/hierarchical_newmodel.stan`.
 8.  Register the `.stan` file path in `stan_model_path()`.
 9.  Add the parameter extraction pattern in
-    [`extract_curve_params()`](https://rdrr.io/pkg/curveRbayes/man/extract_curve_params.html).
+    [`extract_curve_params()`](https://immunoplex.github.io/curveRbayes/reference/extract_curve_params.html).
 10. Add data-adaptive prior computation in
-    [`compute_dynamic_priors()`](https://rdrr.io/pkg/curveRbayes/man/compute_dynamic_priors.html).
+    [`compute_dynamic_priors()`](https://immunoplex.github.io/curveRbayes/reference/compute_dynamic_priors.html).
 11. Add Stan data construction in
-    [`build_stan_data()`](https://rdrr.io/pkg/curveRbayes/man/build_stan_data.html).
+    [`build_stan_data()`](https://immunoplex.github.io/curveRbayes/reference/build_stan_data.html).
 
 No changes to `curveRfreq` are required beyond ensuring the model name
 is passed in `model_names`.
@@ -3261,12 +3262,12 @@ reproduce a curveR analysis from a published methods section.
 
 | Analysis parameter      | Value used in this vignette                   |
 |:------------------------|:----------------------------------------------|
-| curveRcore version      | 0.2.0                                         |
-| curveRfreq version      | 0.2.0                                         |
-| curveRbayes version     | 0.2.0                                         |
-| cmdstanr version        | 0.9.0                                         |
+| curveRcore version      | 0.5.0                                         |
+| curveRfreq version      | 0.5.0                                         |
+| curveRbayes version     | 0.5.0                                         |
+| cmdstanr version        | 0.9.0.9002                                    |
 | CmdStan version         | 2.38.0                                        |
-| R version               | 4.5.1                                         |
+| R version               | 4.5.2                                         |
 | Dataset name            | bead_assay_example                            |
 | Curve IDs analysed      | 1, 2, 3                                       |
 | response_var            | mfi                                           |
@@ -3454,8 +3455,8 @@ knitr::kable(tab,
 
 |       | FALSE | TRUE |
 |:------|------:|-----:|
-| FALSE |     1 |   24 |
-| TRUE  |     0 |   35 |
+| FALSE |     1 |   50 |
+| TRUE  |     0 |    9 |
 
 Binary gate vs continuous weights. Out-of-range samples (pcov_pass =
 FALSE) receive small-but-nonzero weights instead of being discarded.
@@ -3614,9 +3615,9 @@ the LLOQ and ULOQ.” ) )
     cat("── Package versions ──────────────────────────────────────\n")
     #> ── Package versions ──────────────────────────────────────
     cat("curveRcore    :", as.character(packageVersion("curveRcore")),    "\n")
-    #> curveRcore    : 0.2.0
+    #> curveRcore    : 0.5.0
     cat("curveRfreq    :", as.character(packageVersion("curveRfreq")),    "\n")
-    #> curveRfreq    : 0.2.0
+    #> curveRfreq    : 0.5.0
     if (has_bayes) {
       cat("curveRbayes   :", as.character(packageVersion("curveRbayes")),  "\n")
       cat("cmdstanr      :", as.character(packageVersion("cmdstanr")),     "\n")
@@ -3624,12 +3625,12 @@ the LLOQ and ULOQ.” ) )
           tryCatch(cmdstanr::cmdstan_version(), error = function(e) FALSE),
           "\n")
     }
-    #> curveRbayes   : 0.2.0 
-    #> cmdstanr      : 0.9.0 
+    #> curveRbayes   : 0.5.0 
+    #> cmdstanr      : 0.9.0.9002 
     #> CmdStan       : 2.38.0
     if (requireNamespace("curveRweights", quietly = TRUE))
       cat("curveRweights :", as.character(packageVersion("curveRweights")), "\n")
-    #> curveRweights : 0.2.0
+    #> curveRweights : 0.2.1
     cat("posterior     :", as.character(packageVersion("posterior")),    "\n")
     #> posterior     : 1.7.0
     cat("loo           :", as.character(packageVersion("loo")),          "\n")
@@ -3640,9 +3641,9 @@ the LLOQ and ULOQ.” ) )
     #> 
     #> ── Full session info ──────────────────────────────────────
     sessionInfo()
-    #> R version 4.5.1 (2025-06-13 ucrt)
+    #> R version 4.5.2 (2025-10-31 ucrt)
     #> Platform: x86_64-w64-mingw32/x64
-    #> Running under: Windows 11 x64 (build 26100)
+    #> Running under: Windows 11 x64 (build 26200)
     #> 
     #> Matrix products: default
     #>   LAPACK version 3.12.1
@@ -3662,8 +3663,8 @@ the LLOQ and ULOQ.” ) )
     #> 
     #> other attached packages:
     #> [1] metafor_4.8-0       numDeriv_2016.8-1.1 metadat_1.4-0      
-    #> [4] Matrix_1.7-3        curveRweights_0.2.0 curveRbayes_0.2.0  
-    #> [7] curveR_0.2.0        curveRfreq_0.2.0    curveRcore_0.2.0   
+    #> [4] Matrix_1.7-4        curveRweights_0.2.1 curveRbayes_0.5.0  
+    #> [7] curveR_0.3.0        curveRfreq_0.5.0    curveRcore_0.5.0   
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] tidyselect_1.2.1      dplyr_1.2.1           farver_2.1.2         
@@ -3671,33 +3672,33 @@ the LLOQ and ULOQ.” ) )
     #>  [7] TH.data_1.1-5         tensorA_0.36.2.1      mathjaxr_2.0-0       
     #> [10] digest_0.6.39         estimability_1.5.1    lifecycle_1.0.5      
     #> [13] StanHeaders_2.32.10   survival_3.8-3        processx_3.9.0       
-    #> [16] magrittr_2.0.5        posterior_1.7.0       compiler_4.5.1       
-    #> [19] rlang_1.2.0           sass_0.4.10           tools_4.5.1          
+    #> [16] magrittr_2.0.5        posterior_1.7.0       compiler_4.5.2       
+    #> [19] rlang_1.2.0           sass_0.4.10           tools_4.5.2          
     #> [22] yaml_2.3.12           data.table_1.18.4     knitr_1.51           
     #> [25] bridgesampling_1.2-1  htmlwidgets_1.6.4     curl_7.1.0           
     #> [28] pkgbuild_1.4.8        plyr_1.8.9            RColorBrewer_1.1-3   
-    #> [31] cmdstanr_0.9.0        abind_1.4-8           multcomp_1.4-30      
-    #> [34] withr_3.0.2           desc_1.4.3            stats4_4.5.1         
-    #> [37] grid_4.5.1            inline_0.3.21         xtable_1.8-8         
+    #> [31] cmdstanr_0.9.0.9002   abind_1.4-8           multcomp_1.4-30      
+    #> [34] withr_3.0.2           desc_1.4.3            stats4_4.5.2         
+    #> [37] grid_4.5.2            inline_0.3.21         xtable_1.8-8         
     #> [40] ggplot2_4.0.3         emmeans_2.0.2         scales_1.4.0         
     #> [43] MASS_7.3-65           cli_3.6.6             mvtnorm_1.3-5        
     #> [46] rmarkdown_2.31        ragg_1.5.1            generics_0.1.4       
-    #> [49] otel_0.2.0            RcppParallel_5.1.11-2 rstudioapi_0.18.0    
-    #> [52] reshape2_1.4.5        cachem_1.1.0          rstan_2.32.7         
-    #> [55] stringr_1.6.0         splines_4.5.1         bayesplot_1.15.0     
-    #> [58] parallel_4.5.1        matrixStats_1.5.0     brms_2.23.0          
-    #> [61] vctrs_0.7.3           V8_8.0.1              sandwich_3.1-1       
-    #> [64] jsonlite_2.0.0        minpack.lm_1.2-4      callr_3.7.6          
-    #> [67] systemfonts_1.3.2     jquerylib_0.1.4       glue_1.8.1           
-    #> [70] pkgdown_2.2.0         codetools_0.2-20      ps_1.9.3             
-    #> [73] distributional_0.7.0  stringi_1.8.7         gtable_0.3.6         
-    #> [76] QuickJSR_1.9.2        tibble_3.3.1          pillar_1.11.1        
-    #> [79] htmltools_0.5.9       Brobdingnag_1.2-9     R6_2.6.1             
-    #> [82] textshaping_1.0.5     evaluate_1.0.5        lattice_0.22-7       
-    #> [85] backports_1.5.1       bslib_0.11.0          rstantools_2.6.0     
-    #> [88] Rcpp_1.1.1-1.1        gridExtra_2.3         coda_0.19-4.1        
-    #> [91] nlme_3.1-168          checkmate_2.3.4       xfun_0.57            
-    #> [94] fs_2.1.0              zoo_1.8-15            pkgconfig_2.0.3
+    #> [49] otel_0.2.0            RcppParallel_5.1.11-2 reshape2_1.4.5       
+    #> [52] cachem_1.1.0          rstan_2.32.7          stringr_1.6.0        
+    #> [55] splines_4.5.2         bayesplot_1.15.0      parallel_4.5.2       
+    #> [58] matrixStats_1.5.0     brms_2.23.0           vctrs_0.7.3          
+    #> [61] V8_8.0.1              sandwich_3.1-1        jsonlite_2.0.0       
+    #> [64] minpack.lm_1.2-4      callr_3.7.6           systemfonts_1.3.2    
+    #> [67] jquerylib_0.1.4       glue_1.8.1            pkgdown_2.2.0        
+    #> [70] codetools_0.2-20      ps_1.9.3              distributional_0.8.1 
+    #> [73] stringi_1.8.7         gtable_0.3.6          QuickJSR_1.9.2       
+    #> [76] tibble_3.3.1          pillar_1.11.1         htmltools_0.5.9      
+    #> [79] Brobdingnag_1.2-9     R6_2.6.1              textshaping_1.0.5    
+    #> [82] evaluate_1.0.5        lattice_0.22-7        backports_1.5.1      
+    #> [85] bslib_0.11.0          rstantools_2.6.0      Rcpp_1.1.1-1.1       
+    #> [88] gridExtra_2.3         coda_0.19-4.1         nlme_3.1-168         
+    #> [91] checkmate_2.3.4       xfun_0.57             fs_2.1.0             
+    #> [94] zoo_1.8-15            pkgconfig_2.0.3
 
 Belanger, Bruce A., Marie Davidian, and David M. Giltinan. 1996. “The
 Effect of Variance Function Estimation on Nonlinear Calibration
