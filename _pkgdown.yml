@@ -49,6 +49,10 @@ articles:
   navbar: ~
   contents:
   - "curveR-methods-comparison"
+- title: Downstream analysis
+  navbar: Downstream analysis
+  contents:
+  - "analysing-ispi-exports"
 
 reference:
 - title: "curveR: bead_assay adding timeperiod cohort_arm"

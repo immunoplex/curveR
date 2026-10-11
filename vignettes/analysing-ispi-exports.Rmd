@@ -1,0 +1,388 @@
+---
+title: "Analysing I-SPI exports: censoring, predictive intervals and precision"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{Analysing I-SPI exports: censoring, predictive intervals and precision}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+has_survival <- requireNamespace("survival", quietly = TRUE)
+```
+
+This vignette is for analysts working downstream of I-SPI (or of the curveR
+packages directly) with back-calculated test-sample concentrations. It
+explains what the per-sample uncertainty columns mean, why samples outside the
+quantifiable range should be treated as **censored** rather than as imprecise
+points, and how to fit regression models that use every sample correctly.
+
+All executable code below runs on a simulated data set built in the vignette,
+with the same column names as an I-SPI export, so no database is needed.
+
+# 1. What an export gives you
+
+Each back-calculated sample (`calib_samples`, or `tidy_samples()` on a curveR
+result after `classify_censoring_multiplate()`) carries:
+
+| Column(s) | Meaning |
+|---|---|
+| `final_concentration` | Point estimate, natural scale, dilution-corrected |
+| `se_concentration` | SD of the log₁₀ concentration (delta method or posterior SD) |
+| `pcov` | `100 · ln(10) · se_concentration`, capped at 150 — symmetric and direction-blind |
+| `censor_class`, `censor_type` | `quantified` / `lod_to_lloq` / `below_lod` / `below_lloq` / `above_uloq` / `saturated`; type `none` / `left` / `interval` / `right` |
+| `censor_lower`, `censor_upper` | Censoring bounds, natural scale, dilution-corrected; `NA` = unbounded (a left-censored lower bound is 0) |
+| `conc_q_lo`, `conc_q_med`, `conc_q_hi` | 2.5 / 50 / 97.5 % predictive quantiles, natural scale |
+| `p_below_lloq`, `p_above_uloq`, `p_below_cutoff` | Probabilities from the predictive distribution |
+| `frac_draws_below_a`, `frac_draws_above_d` | Share of draws beyond the curve's asymptotes |
+
+From the precision-weights tab (`calib_weights`, `calib_weights_fit`):
+`sigma`, `w`, `w_norm` per sample and `phi`, `beta1` per group.
+
+**Why `pcov` is not enough.** A sample below the LLOQ has a true concentration
+bounded between 0 and about the LLOQ; a sample above the ULOQ has no upper
+bound. Both can show the same `pcov`, because `pcov` is one symmetric number on
+the log scale, where *both* sides are open-ended. On the natural scale the low
+sample is tightly bounded and often answers threshold questions with certainty;
+the high one is not. Censoring columns carry exactly that information.
+
+# 2. Choosing a scale and building analysis columns
+
+Analyse **y = log₁₀(concentration)**: assay error is roughly multiplicative,
+`se_concentration` is already on this scale, and censoring bounds transform
+cleanly (a natural-scale lower bound of 0 becomes −∞, coded `NA`).
+
+```{r simulate}
+set.seed(2026)
+n_pat <- 120
+pat <- data.frame(patientid = sprintf("P%03d", seq_len(n_pat)),
+                  arm = rep(c("placebo", "vaccine"), each = n_pat / 2),
+                  u = rnorm(n_pat, 0, 0.3))                # patient random effect
+d <- merge(pat, data.frame(timeperiod = c("day0", "day28")))
+d$arm <- factor(d$arm); d$timeperiod <- factor(d$timeperiod)
+
+# true geometric means (log10): placebo 0.6 -> 0.8; vaccine 0.6 -> 2.0
+mu_true <- with(d, 0.6 + 0.2 * (timeperiod == "day28") +
+                    1.2 * (arm == "vaccine" & timeperiod == "day28"))
+y_true  <- mu_true + d$u + rnorm(nrow(d), 0, 0.4)
+
+# measurement SE (log10): U-shaped precision profile
+se_fun <- function(y) 0.05 + 0.35 * plogis((0.5 - y) / 0.15) + 0.35 * plogis((y - 3.0) / 0.15)
+y_obs  <- y_true + rnorm(nrow(d), 0, se_fun(y_true))
+
+LOD <- 0.2; LLOQ <- 0.5; ULOQ <- 3.0                       # log10, dilution 1
+d$final_concentration <- 10^y_obs
+d$se_concentration    <- se_fun(y_obs)
+d$censor_class <- with(d, ifelse(y_obs < LOD, "below_lod",
+                          ifelse(y_obs < LLOQ, "lod_to_lloq",
+                          ifelse(y_obs > ULOQ, "above_uloq", "quantified"))))
+d$censor_type  <- c(below_lod = "left", lod_to_lloq = "interval",
+                    above_uloq = "right", quantified = "none")[d$censor_class]
+d$censor_lower <- with(d, ifelse(censor_class == "lod_to_lloq", 10^LOD,
+                          ifelse(censor_class == "above_uloq", 10^ULOQ, NA)))
+d$censor_upper <- with(d, ifelse(censor_class == "below_lod", 10^LOD,
+                          ifelse(censor_class == "lod_to_lloq", 10^LLOQ, NA)))
+cutoff <- 10                                              # e.g. a protective level
+d$p_below_cutoff <- pnorm((log10(cutoff) - y_obs) / d$se_concentration)  # stand-in
+
+table(d$arm, d$timeperiod, d$censor_class)[, , c("below_lod", "lod_to_lloq", "quantified")]
+```
+
+Build the log-scale analysis columns once, using the `survival` "interval2"
+convention: `y_lo == y_hi` for an exact value, `NA` for an unbounded side.
+
+```{r analysis-cols}
+d$y    <- log10(d$final_concentration)
+d$y_lo <- ifelse(d$censor_type %in% c("interval", "right"), log10(d$censor_lower), NA)
+d$y_hi <- ifelse(d$censor_type %in% c("left", "interval"), log10(d$censor_upper), NA)
+d$y_lo[d$censor_type == "none"] <- d$y[d$censor_type == "none"]
+d$y_hi[d$censor_type == "none"] <- d$y[d$censor_type == "none"]
+```
+
+# 3. Options at a glance
+
+| Approach | Use when | Avoid when |
+|---|---|---|
+| Substitution (LLOQ/2, LLOQ/√2) | Sensitivity analysis only | Primary analysis: biased, SEs too small |
+| Complete case (drop out-of-range) | Never as primary | Out-of-range depends on the outcome — it always does |
+| Precision weights on every row | In-range noise heterogeneity | Out-of-range rows: weights fall *because* values are low, so weighted means drift up |
+| **Censored Gaussian (Tobit)** | Regression on log₁₀ concentration | Very heavy censoring with no plausible distribution |
+| **Survival-style nonparametric** | CDFs, medians, group comparisons without normality | Covariate-rich models |
+| **Bayesian censored likelihood** | Repeated measures, known measurement error, full uncertainty | A quick frequentist answer suffices |
+| Threshold probabilities | "Below the protective level?" questions | Estimating mean levels |
+
+The substitution and complete-case rows are worth seeing fail:
+
+```{r naive}
+truth <- c(`(Intercept)` = 0.6, armvaccine = 0, timeperiodday28 = 0.2,
+           `armvaccine:timeperiodday28` = 1.2)
+
+cc  <- lm(y ~ arm * timeperiod, data = d[d$censor_type == "none", ])
+sub <- d; low <- sub$censor_type %in% c("left", "interval")
+sub$y[low] <- log10(10^LLOQ / sqrt(2))
+sub$y[sub$censor_type == "right"] <- ULOQ
+sb  <- lm(y ~ arm * timeperiod, data = sub)
+round(cbind(truth, complete_case = coef(cc), substitution = coef(sb)), 2)
+```
+
+Complete-case analysis keeps only the placebo samples that happened to read
+high, so it overstates the placebo level and understates the vaccine effect.
+
+# 4. Censored Gaussian regression (Tobit)
+
+With μᵢ = xᵢᵀβ and residual SD σ, each row contributes
+
+* quantified: φ((yᵢ − μᵢ)/σ)/σ
+* left-censored at U: Φ((U − μᵢ)/σ)
+* interval [L, U]: Φ((U − μᵢ)/σ) − Φ((L − μᵢ)/σ)
+* right-censored at L: 1 − Φ((L − μᵢ)/σ)
+
+Coefficients describe the latent (uncensored) log₁₀ concentration;
+`10^β` is a geometric-mean ratio.
+
+```{r tobit, eval = has_survival}
+library(survival)
+tob <- survreg(Surv(y_lo, y_hi, type = "interval2") ~ arm * timeperiod,
+               data = d, dist = "gaussian", robust = TRUE, cluster = patientid)
+round(cbind(truth, tobit = coef(tob)), 2)
+round(summary(tob)$table[, c("Value", "Std. Err")], 3)   # robust (patient-clustered) SEs
+```
+
+`robust = TRUE, cluster = patientid` gives sandwich standard errors for repeated
+measures; `survreg` has no random effects (use section 6 or `censReg` for a
+random intercept). `AER::tobit()` is a thin wrapper for left/right censoring.
+
+# 5. Using the measurement error too — and why weighting by it can bias
+
+Tobit assumes one residual SD for every row. I-SPI tells you each sample's own
+measurement SE, so it is tempting to split the residual into between-subject
+spread τ and known measurement error sᵢ:
+
+$$ y_i \sim \mathcal N\!\left(\mu_i,\; \sqrt{\tau^2 + s_i^2}\right). $$
+
+For a quantified row, sᵢ is `se_concentration` and the implied precision
+weight is 1/(τ² + sᵢ²). For a censored row, `se_concentration` is not
+meaningful (it is huge or `NA` precisely because the sample is out of range),
+so the censored probability uses the SE **at the censoring bound**, read from
+the curve's precision profile (`calib_grid`: `se = pcov / (100 · ln 10)` at the
+LLOQ / ULOQ / LOD). This is the "weights for in-range samples, censoring
+indicators for out-of-range samples" model.
+
+**Caution.** In an immunoassay the measurement SE is a function of the true
+concentration (the U-shaped precision profile). Inverse-variance weighting
+then down-weights samples *because* their true value is low (or high), and the
+fitted means drift toward the well-measured middle of the curve. This is the
+same informative-weighting problem as down-weighting out-of-range samples, and
+it happens **even when the SEs are known exactly**. In 200 replicates of the
+simulation below (same design, fresh data each time):
+
+| Estimate | Bias: Tobit | Bias: weighted (true SE) | Bias: latent-variable | RMSE: Tobit | RMSE: weighted | RMSE: latent |
+|---|---|---|---|---|---|---|
+| Intercept (truth 0.6) | +0.029 | +0.097 | +0.040 | 0.074 | 0.117 | 0.101 |
+| Interaction (truth 1.2) | −0.011 | −0.079 | −0.025 | 0.104 | 0.125 | 0.155 |
+
+The fix is to model the error SD as a function of the **latent** true
+concentration tᵢ rather than plugging in a per-row SE:
+yᵢ ~ N(tᵢ, s(tᵢ)), tᵢ ~ N(μᵢ, τ), integrating over tᵢ (the "latent-variable"
+column; code below). It removes most of the bias, but on these data it is
+*less* precise than plain Tobit. **Recommendation:** use the censored model of
+section 4 for group means and effects; reach for the latent-variable model
+only when measurement error is large relative to between-subject spread; avoid
+plugging per-sample SEs in as weights for location estimates.
+
+The naive weighted model, on the demonstration data:
+
+```{r hetero}
+X <- model.matrix(~ arm * timeperiod, d)
+type <- d$censor_type
+s_row <- d$se_concentration
+s_lo  <- se_fun(d$y_lo); s_hi <- se_fun(d$y_hi)      # in practice: from calib_grid
+
+negll <- function(par) {
+  mu  <- drop(X %*% par[seq_len(ncol(X))]); tau <- exp(par[ncol(X) + 1])
+  ll  <- numeric(nrow(X))
+  q <- type == "none"
+  ll[q] <- dnorm(d$y[q], mu[q], sqrt(tau^2 + s_row[q]^2), log = TRUE)
+  l <- type == "left"
+  ll[l] <- pnorm(d$y_hi[l], mu[l], sqrt(tau^2 + s_hi[l]^2), log.p = TRUE)
+  r <- type == "right"
+  ll[r] <- pnorm(d$y_lo[r], mu[r], sqrt(tau^2 + s_lo[r]^2), lower.tail = FALSE, log.p = TRUE)
+  iv <- type == "interval"
+  sd_iv <- sqrt(tau^2 + s_hi[iv]^2)
+  ll[iv] <- log(pnorm(d$y_hi[iv], mu[iv], sd_iv) - pnorm(d$y_lo[iv], mu[iv], sd_iv))
+  -sum(ll)
+}
+start <- c(coef(cc), log(0.5))
+het <- optim(start, negll, method = "BFGS", hessian = TRUE)
+est <- het$par[seq_len(ncol(X))]; se <- sqrt(diag(solve(het$hessian)))[seq_len(ncol(X))]
+round(cbind(truth, heteroscedastic = est, se = se), 3)
+c(tau = exp(het$par[ncol(X) + 1]))
+```
+
+The latent-variable version integrates over the true concentration with
+Gauss–Hermite quadrature. `se_fun()` stands for the precision profile, which in
+practice you interpolate from `calib_grid` (`log10_concentration`,
+`se = pcov / (100 · ln 10)`):
+
+```{r latent}
+gh <- function(k) {                                     # Gauss-Hermite nodes/weights
+  i <- seq_len(k - 1); J <- matrix(0, k, k)
+  J[cbind(i, i + 1)] <- J[cbind(i + 1, i)] <- sqrt(i / 2)
+  e <- eigen(J, symmetric = TRUE); list(x = e$values, w = sqrt(pi) * e$vectors[1, ]^2)
+}
+G  <- gh(40)
+lo <- ifelse(is.na(d$y_lo), -Inf, d$y_lo); hi <- ifelse(is.na(d$y_hi), Inf, d$y_hi)
+q  <- type == "none"
+negll_latent <- function(par) {
+  m  <- drop(X %*% par[seq_len(ncol(X))]); tau <- exp(par[ncol(X) + 1])
+  tt <- outer(m, sqrt(2) * tau * G$x, "+")              # latent true values at the nodes
+  st <- se_fun(tt)                                      # error SD depends on the TRUE value
+  f  <- matrix(0, nrow(tt), ncol(tt))
+  f[q, ]  <- dnorm(d$y[q], tt[q, , drop = FALSE], st[q, , drop = FALSE])
+  f[!q, ] <- pnorm((hi[!q] - tt[!q, , drop = FALSE]) / st[!q, , drop = FALSE]) -
+             pnorm((lo[!q] - tt[!q, , drop = FALSE]) / st[!q, , drop = FALSE])
+  -sum(log(pmax(drop(f %*% G$w) / sqrt(pi), 1e-300)))
+}
+start_lat <- if (has_survival) c(coef(tob), log(0.5)) else start
+lat <- optim(start_lat, negll_latent, method = "BFGS",
+             control = list(maxit = 1000, reltol = 1e-12))
+round(cbind(truth, latent = lat$par[seq_len(ncol(X))]), 3)
+```
+
+All of these standard errors ignore the patient clustering; add a patient
+random effect (section 6) or use a cluster bootstrap for repeated measures.
+
+# 6. Bayesian censored likelihood
+
+The censored likelihood inside a hierarchical model with a patient random
+effect. The simplest version (`sigma ~ 1`) is a random-effects Tobit and is the
+recommended default. Adding a scale model on the measurement SE — the analogue
+of curveRweights' σᵢ = φ·sᵢ^β₁ — is shown commented out; given section 5 it
+should be used for location estimates only with that caveat in mind (or
+replaced by a latent-variable formulation written directly in Stan):
+
+```{r brms, eval = FALSE}
+library(brms)
+d$cens <- d$censor_type                               # none/left/interval/right
+d$yb   <- ifelse(d$cens == "left", d$y_hi, ifelse(d$cens == "right", d$y_lo, d$y))
+d$yb[d$cens == "interval"] <- d$y_lo[d$cens == "interval"]
+d$y2   <- ifelse(d$cens == "interval", d$y_hi, NA)
+# scale predictor: own SE when quantified, SE at the bound when censored
+d$s_scale <- ifelse(d$cens == "none", d$se_concentration,
+                    ifelse(d$cens == "right", s_lo, s_hi))
+
+fit <- brm(bf(yb | cens(cens, y2) ~ arm * timeperiod + (1 | patientid)),
+              # sigma ~ log(s_scale)   # measurement-SE scale model: see section 5
+           data = d, family = gaussian(), chains = 4, cores = 4,
+           prior = c(prior(normal(0, 2), class = "b"),
+                     prior(normal(0, 1), class = "sd")))
+summary(fit)
+pp_check(fit)
+```
+
+Check the fit by simulating replicated data, applying the same censoring
+bounds, and comparing the share censored per group with the observed share.
+
+**Full-uncertainty variant (multiple imputation).** Impute each sample from its
+own predictive distribution, analyse each completed data set, and pool with
+Rubin's rules. I-SPI stores quantiles (`conc_q_lo/med/hi`), not per-sample
+draws, so quantified rows must be approximated from the quantiles (for example
+a skew-normal on log₁₀ matched to them), and censored rows drawn from the
+truncated predictive distribution implied by the fitted model.
+
+# 7. Survival-style nonparametric analysis
+
+Left-censored concentrations become right-censored by "flipping",
+t = M − y with M larger than every y (Helsel 2012). Kaplan–Meier then estimates
+the distribution of concentration without a normality assumption, the log-rank
+or Peto–Prentice test compares groups, and Cox models give covariate effects on
+the flipped scale. `NADA2` wraps these:
+
+```{r nada, eval = FALSE}
+library(NADA2)
+left <- d$censor_type %in% c("left", "interval")      # treat interval as left at its upper bound
+obs  <- ifelse(left, d$censor_upper, d$final_concentration)
+cenfit(obs, left, d$arm)                               # KM medians / percentiles by arm
+cen2means(obs, left, d$arm)                            # MLE comparison of means
+```
+
+To keep the `lod_to_lloq` band as a genuine interval rather than collapsing it,
+use a Turnbull nonparametric MLE (`icenReg::ic_np()`, the `interval` package).
+
+# 8. Threshold questions
+
+Use the probabilities directly rather than classifying point estimates.
+
+```{r threshold}
+by_grp <- split(d$p_below_cutoff, interaction(d$arm, d$timeperiod))
+expected_below <- vapply(by_grp, sum, numeric(1))
+
+# Poisson-binomial uncertainty for the number below the cutoff, by simulation
+pb <- vapply(by_grp, function(p) quantile(replicate(4000, sum(runif(length(p)) < p)),
+                                           c(.025, .975)), numeric(2))
+round(rbind(n = lengths(by_grp), expected_below = expected_below, pb), 1)
+
+# Three-way classification with an explicit indeterminate group
+cls <- cut(d$p_below_cutoff, c(-Inf, 0.025, 0.975, Inf),
+           labels = c("above", "indeterminate", "below"))
+table(interaction(d$arm, d$timeperiod), cls)
+```
+
+Low samples routinely resolve to "below" with near certainty even when their
+`pcov` is very large — this is where they add information. Samples above the
+ULOQ, or `saturated`, should usually be **re-assayed at a higher dilution**
+rather than modelled.
+
+# 9. Where precision weights fit — and a future option
+
+`curveRweights::fit_precision_weights()` estimates σᵢ = φ·sᵢ^β₁ with a
+saturated cell-means location and returns weights `w = 1/σ²` for every sample.
+Two cautions follow from sections 3 and 5:
+
+1. **Out-of-range samples.** Their `se_concentration` is inflated *because*
+   they are out of range, so their weights are small because their values are
+   extreme. Weighted means lean away from the censored side (upward for
+   low-titer groups), and those samples' residuals distort φ and β₁.
+2. **In-range samples too.** Because precision varies with the true
+   concentration even inside the quantifiable range, inverse-variance weights
+   are mildly informative there as well, pulling means toward the
+   best-measured region (section 5's table).
+
+The planned extension handles (1): in-range rows keep their Gaussian
+contribution and weight; out-of-range rows get no weight but a censoring
+indicator and bounds, contributing Φ-terms with σ evaluated at the bound. In
+curveRweights this means a `brms::cens()` term inside the saturated
+location-scale model and an `as_weight_data(censoring = TRUE)` option that
+carries `cens`, `y_lo`, `y_hi` and the bound σ through `join_weights()`, so a
+single frame feeds sections 4–6 directly. Handling (2) properly needs the
+latent-variable formulation of section 5 rather than plug-in weights.
+
+Until then, for **group means and effects**, prefer the unweighted censored
+models of sections 4 and 6; use precision weights where the goal is
+down-weighting genuinely noisy measurements and the precision does not track
+the outcome, and report a weighted-vs-unweighted sensitivity analysis.
+
+# 10. Reporting checklist
+
+* Share censored per group and side (`table(group, censor_class)`).
+* The method used for censored values, and why.
+* Sensitivity analyses against substitution and complete case.
+* Whether precision weights were used, and for which rows.
+* The `decision_cutoff` and probability thresholds used for classifications.
+* For curves with many out-of-range samples, `frac_draws_below_a` /
+  `frac_draws_above_d` — they show how much the legacy `pcov` leaves out.
+
+# References
+
+* Helsel DR (2012). *Statistics for Censored Environmental Data Using Minitab
+  and R*, 2nd ed. Wiley.
+* Tobin J (1958). Estimation of relationships for limited dependent variables.
+  *Econometrica* 26(1):24–36.
+* Lynn HS (2001). Maximum likelihood inference for left-censored HIV RNA data.
+  *Statistics in Medicine* 20(1):33–45.
+* Bürkner P-C (2017). brms: An R package for Bayesian multilevel models using
+  Stan. *Journal of Statistical Software* 80(1):1–28.
